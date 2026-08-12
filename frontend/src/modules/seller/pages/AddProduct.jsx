@@ -1,0 +1,860 @@
+import React, { useState, useMemo, useEffect } from "react";
+import Button from "@shared/components/ui/Button";
+import Badge from "@shared/components/ui/Badge";
+import {
+  HiOutlineArrowLeft,
+  HiOutlineCube,
+  HiOutlineTag,
+  HiOutlineCurrencyDollar,
+  HiOutlineSwatch,
+  HiOutlineFolderOpen,
+  HiOutlinePhoto,
+  HiOutlineScale,
+  HiOutlineArrowPath,
+  HiOutlineTrash,
+  HiOutlinePlus,
+  HiOutlineSquaresPlus,
+} from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { sellerApi } from "../services/sellerApi";
+import CustomSelect from "@shared/components/ui/CustomSelect";
+
+const AddProduct = () => {
+  const navigate = useNavigate();
+  const [modalTab, setModalTab] = useState("general");
+  const [isSaving, setIsSaving] = useState(false);
+
+
+
+  const [formData, setFormData] = useState({
+    name: "",
+    sku: "",
+    description: "",
+    price: "",
+    salePrice: "",
+    stock: "",
+    lowStockAlert: 5,
+    category: "",
+    subcategory: "",
+    header: "",
+    status: "active",
+    isReturnable: false,
+    returnWindow: 7,
+    tags: "",
+    weight: "",
+    brand: "",
+    hsnCode: "",
+    gstRate: 18,
+    upcNumber: "",
+    countryOfOrigin: "India",
+    fssaiLicense: "",
+    foodPreference: "none",
+    mainImage: null,
+    galleryImages: [],
+    variants: [
+      {
+        id: Date.now(),
+        name: "",
+        price: "",
+        salePrice: "",
+        stock: "",
+        sku: "",
+      },
+    ],
+  });
+
+  const [dbCategories, setDbCategories] = useState([]);
+  const [isLoadingCats, setIsLoadingCats] = useState(true);
+
+  const [settlementPreview, setSettlementPreview] = useState(null);
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
+  useEffect(() => {
+    const firstVariant = formData.variants[0] || {};
+    const price = firstVariant.price;
+    const salePrice = firstVariant.salePrice;
+    const headerId = formData.header;
+    const categoryId = formData.category;
+    const subcategoryId = formData.subcategory;
+
+    if (Number(price) > 0 || Number(salePrice) > 0) {
+      const fetchPreview = async () => {
+        setIsPreviewLoading(true);
+        try {
+          const res = await sellerApi.getProductSettlementPreview({
+            price,
+            salePrice,
+            headerId,
+            categoryId,
+            subcategoryId
+          });
+          if (res.data.success) {
+            setSettlementPreview(res.data.result || res.data.results);
+          }
+        } catch (error) {
+          console.error("Failed to fetch settlement preview:", error);
+        } finally {
+          setIsPreviewLoading(false);
+        }
+      };
+
+      const delayDebounceFn = setTimeout(() => {
+        fetchPreview();
+      }, 600);
+
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setSettlementPreview(null);
+    }
+  }, [formData.variants[0]?.price, formData.variants[0]?.salePrice, formData.header, formData.category, formData.subcategory]);
+
+
+
+  React.useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await sellerApi.getCategoryTree();
+        if (res.data.success) {
+          setDbCategories(res.data.results || res.data.result || []);
+        }
+      } catch (error) {
+        toast.error("Failed to load categories");
+      } finally {
+        setIsLoadingCats(false);
+      }
+    };
+    fetchCats();
+  }, []);
+
+  const categories = dbCategories;
+
+  const handleSave = async () => {
+    // Validate required fields
+    if (!formData.name) {
+      toast.error("Please fill in the Product Title");
+      return;
+    }
+
+    // Validate all three category levels are selected
+    if (!formData.header || !formData.category || !formData.subcategory) {
+      toast.error("Please select all three category levels: Main Group, Specific Category, and Sub-Category");
+      return;
+    }
+
+    const firstVariant = formData.variants[0] || {};
+    if (!firstVariant.price || !firstVariant.stock) {
+      toast.error("Main variant must have price and stock");
+      return;
+    }
+
+    // HSN Code Validation
+    if (!formData.hsnCode) {
+      toast.error("Please provide an HSN Code");
+      return;
+    }
+    const hsnRegex = /^(?:\d{4}|\d{6}|\d{8})$/;
+    if (!hsnRegex.test(formData.hsnCode)) {
+      toast.error("HSN Code must be exactly 4, 6, or 8 digits (numeric only)");
+      return;
+    }
+
+    // UPC Number Validation
+    if (formData.upcNumber) {
+      const upcRegex = /^(?:\d{8}|\d{12}|\d{13}|\d{14})$/;
+      if (!upcRegex.test(formData.upcNumber)) {
+        toast.error("UPC Number must be exactly 8, 12, 13, or 14 digits (numeric only)");
+        return;
+      }
+    }
+
+    setIsSaving(true);
+    try {
+      const data = new FormData();
+
+      // Basic fields
+      data.append("name", formData.name);
+      data.append("sku", formData.sku);
+      data.append("description", formData.description);
+      data.append("brand", formData.brand);
+      data.append("weight", formData.weight);
+      data.append("status", formData.status);
+      data.append("hsnCode", formData.hsnCode);
+      data.append("gstRate", formData.gstRate);
+      if (formData.upcNumber) {
+        data.append("upcNumber", formData.upcNumber);
+      }
+      
+      // Additional Details
+      if (formData.shelfLife) data.append("shelfLife", formData.shelfLife);
+      if (formData.countryOfOrigin) data.append("countryOfOrigin", formData.countryOfOrigin);
+      if (formData.fssaiLicense) data.append("fssaiLicense", formData.fssaiLicense);
+      data.append("foodPreference", formData.foodPreference);
+      
+      data.append("isReturnable", formData.isReturnable);
+      if (formData.isReturnable) {
+        data.append("returnWindow", Number(formData.returnWindow));
+      }
+
+      // Map top-level price/stock from first variant for indexing/listing
+      data.append("price", firstVariant.price);
+      data.append("salePrice", firstVariant.salePrice || 0);
+      data.append("stock", firstVariant.stock);
+
+      // Category IDs
+      data.append("headerId", formData.header);
+      data.append("categoryId", formData.category);
+      data.append("subcategoryId", formData.subcategory);
+
+      // Tags
+      data.append("tags", formData.tags);
+
+      // Images
+      if (formData.mainImageFile) {
+        data.append("mainImage", formData.mainImageFile);
+      }
+
+      if (formData.galleryFiles && formData.galleryFiles.length > 0) {
+        formData.galleryFiles.forEach(file => {
+          data.append("galleryImages", file);
+        });
+      }
+
+      // Variants
+      data.append("variants", JSON.stringify(formData.variants));
+
+      const response = await sellerApi.createProduct(data);
+      const approvalStatus = response?.data?.result?.approvalStatus;
+      if (approvalStatus === "pending") {
+        toast.success("Product submitted for admin approval");
+      } else {
+        toast.success(response?.data?.message || "Product saved successfully!");
+      }
+      navigate("/seller/products");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to save product");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleImageUpload = (e, type) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (type === "main") {
+          setFormData({
+            ...formData,
+            mainImage: reader.result,
+            mainImageFile: file
+          });
+        } else {
+          setFormData({
+            ...formData,
+            galleryImages: [...formData.galleryImages, reader.result],
+            galleryFiles: [...(formData.galleryFiles || []), file]
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <Button
+          variant="ghost"
+          className="pl-0 hover:bg-transparent hover:text-primary-600"
+          onClick={() => navigate(-1)}>
+          <HiOutlineArrowLeft className="mr-2 h-5 w-5" />
+          Back to Products
+        </Button>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => navigate(-1)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="min-w-[140px]">
+            {isSaving ? (
+              <>
+                <HiOutlineArrowPath className="mr-2 h-5 w-5 animate-spin" />
+                Publishing...
+              </>
+            ) : (
+              "Save & Publish"
+            )}
+          </Button>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[600px] border border-slate-100">
+        {/* Sidebar Tabs */}
+        <div className="md:w-64 bg-slate-50/50 border-r border-slate-100 p-4 space-y-1 overflow-y-auto">
+          {[
+            { id: "general", label: "General Info", icon: HiOutlineTag },
+            { id: "variants", label: "Item Variants", icon: HiOutlineSwatch },
+            { id: "category", label: "Groups", icon: HiOutlineFolderOpen },
+            { id: "media", label: "Photos", icon: HiOutlinePhoto },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setModalTab(tab.id)}
+              className={cn(
+                "w-full flex items-center space-x-3 px-4 py-3 rounded-md text-xs font-bold transition-all text-left",
+                modalTab === tab.id
+                  ? "bg-white text-primary shadow-sm ring-1 ring-slate-100"
+                  : "text-slate-600 hover:bg-slate-100",
+              )}>
+              <tab.icon className="h-4 w-4" />
+              <span>{tab.label}</span>
+            </button>
+          ))}
+
+          <div className="pt-8 px-4">
+            <div className="p-4 bg-brand-50 rounded-md border border-brand-100">
+              <p className="text-[9px] font-bold text-brand-600 uppercase tracking-widest mb-1">
+                Status
+              </p>
+              <CustomSelect
+                value={formData.status}
+                onChange={(val) =>
+                  setFormData({ ...formData, status: val })
+                }
+                options={[
+                  { value: "active", label: "PUBLISHED" },
+                  { value: "inactive", label: "DRAFT" },
+                ]}
+                className="bg-transparent text-xs text-brand-700 px-0 py-0 hover:bg-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex-1 p-8 overflow-y-auto">
+          {modalTab === "general" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-2 duration-300">
+              <div className="space-y-1.5 flex flex-col">
+                <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                  Product Title
+                </label>
+                <input
+                  value={formData.name}
+                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                  placeholder="e.g. Premium Basmati Rice"
+                />
+              </div>
+              <div className="space-y-1.5 flex flex-col">
+                <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                  About this item
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  onWheel={(e) => e.stopPropagation()}
+                  onTouchMove={(e) => e.stopPropagation()}
+                  className="w-full px-4 py-3 bg-slate-100 border-none rounded-2xl text-sm font-semibold min-h-[160px] max-h-[260px] outline-none transition-all focus:ring-2 focus:ring-primary/5 resize-none overflow-y-auto custom-scrollbar"
+                  placeholder="Describe the item here..."
+                />
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Brand Name
+                  </label>
+                  <input
+                    value={formData.brand}
+                    onChange={(e) =>
+                      setFormData({ ...formData, brand: e.target.value })
+                    }
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="e.g. Amul"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    HSN Code <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    value={formData.hsnCode}
+                    onChange={(e) => setFormData({ ...formData, hsnCode: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="Example: 48194000"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Must be 4, 6 or 8 digits</p>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    GST Rate (%) <span className="text-rose-500">*</span>
+                  </label>
+                  <CustomSelect
+                    value={formData.gstRate}
+                    onChange={(val) => setFormData({ ...formData, gstRate: Number(val) })}
+                    placeholder="Select GST Rate"
+                    options={[
+                      { value: 0, label: "0% (Exempt)" },
+                      { value: 5, label: "5%" },
+                      { value: 12, label: "12%" },
+                      { value: 18, label: "18%" },
+                      { value: 28, label: "28%" },
+                    ]}
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Default is 18%</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    UPC Number
+                  </label>
+                  <input
+                    value={formData.upcNumber}
+                    onChange={(e) => setFormData({ ...formData, upcNumber: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="Example: 890123456789"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Optional. Must be 8, 12, 13 or 14 digits</p>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Search Keywords (Tags)
+                  </label>
+                  <input
+                    value={formData.tags}
+                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="e.g. dhudh, milks, Guras, Khira"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Comma-separated alternative names for search.</p>
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Shelf Life
+                  </label>
+                  <input
+                    value={formData.shelfLife}
+                    onChange={(e) => setFormData({ ...formData, shelfLife: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="Example: 3 Days, 1 Year"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Optional.</p>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Country of Origin
+                  </label>
+                  <input
+                    value={formData.countryOfOrigin}
+                    onChange={(e) => setFormData({ ...formData, countryOfOrigin: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="Example: India"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Default is India.</p>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    FSSAI License
+                  </label>
+                  <input
+                    value={formData.fssaiLicense}
+                    onChange={(e) => setFormData({ ...formData, fssaiLicense: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-100 border-none rounded-md text-sm font-semibold outline-none ring-primary/5 focus:ring-2 transition-all"
+                    placeholder="Example: 1001234567890"
+                    type="text"
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Optional. Required for food items.</p>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Food Preference
+                  </label>
+                  <CustomSelect
+                    value={formData.foodPreference}
+                    onChange={(val) => setFormData({ ...formData, foodPreference: val })}
+                    placeholder="Select Preference"
+                    options={[
+                      { value: "none", label: "Not Applicable (Non-food)" },
+                      { value: "veg", label: "Veg" },
+                      { value: "non-veg", label: "Non-Veg" },
+                    ]}
+                  />
+                  <p className="text-[10px] text-slate-500 ml-1">Shows green/red icon on app.</p>
+                </div>
+              </div>
+
+              {/* Bank Settlement Breakdown */}
+              <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 mt-6 animate-in fade-in slide-in-from-bottom-2">
+                <h3 className="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
+                  <span>Bank Settlement Breakdown</span>
+                  {isPreviewLoading && <HiOutlineArrowPath className="animate-spin text-slate-400" />}
+                </h3>
+
+                {settlementPreview ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-xs font-medium text-slate-600">
+                      <span>Customer Price</span>
+                      <span>₹{settlementPreview.customerPrice?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-medium text-slate-600">
+                      <span>Commission fee ({settlementPreview.commissionPercentage}%)</span>
+                      <span className="text-rose-500">-₹{settlementPreview.commissionFee?.toLocaleString()}</span>
+                    </div>
+                    {settlementPreview.handlingFee > 0 && (
+                      <div className="flex justify-between text-xs font-medium text-slate-600">
+                        <span>Handling charge</span>
+                        <span className="text-rose-500">-₹{settlementPreview.handlingFee?.toLocaleString()}</span>
+                      </div>
+                    )}
+
+                    <div className="border-t border-dashed border-slate-300 pt-3 mt-3">
+                      <div className="flex justify-between text-sm font-black text-slate-900">
+                        <span>Bank settlement amount</span>
+                        <span className="text-brand-600">₹{settlementPreview.bankSettlementAmount?.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-slate-500 italic text-center py-4">
+                    Enter product price and select categories to see your expected earnings.
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 pt-2">
+                <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-xl">
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Returnable Item</p>
+                    <p className="text-[10px] font-medium text-slate-500">Allow customers to return this item after delivery</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={formData.isReturnable}
+                      onChange={(e) => setFormData({ ...formData, isReturnable: e.target.checked })}
+                    />
+                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+                {formData.isReturnable && (
+                  <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-xl mt-2 animate-in fade-in slide-in-from-top-2">
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">Return Window (Days)</p>
+                      <p className="text-[10px] font-medium text-slate-500">Number of days a customer has to return the item</p>
+                    </div>
+                    <div className="w-24">
+                      <input
+                        type="number"
+                        min="1"
+                        value={formData.returnWindow}
+                        onChange={(e) => setFormData({ ...formData, returnWindow: e.target.value })}
+                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-semibold outline-none ring-primary/5 focus:ring-2 focus:border-primary transition-all text-center"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {modalTab === "variants" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-2 duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">
+                    Product Variants
+                  </h4>
+                  <p className="text-xs text-slate-600 font-medium">
+                    Add different sizes, colors or weights.
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      variants: [
+                        ...prev.variants,
+                        {
+                          id: Date.now(),
+                          name: "",
+                          price: "",
+                          salePrice: "",
+                          stock: "",
+                          sku: "",
+                        },
+                      ],
+                    }))
+                  }
+                  className="flex items-center space-x-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-[10px] font-bold hover:bg-primary/20 transition-all">
+                  <HiOutlineSquaresPlus className="h-4 w-4" />
+                  <span>ADD VARIANT</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {(formData.variants || []).map((variant, index) => (
+                  <div
+                    key={variant.id}
+                    className="p-4 bg-slate-50 rounded-2xl border border-slate-100 grid grid-cols-1 md:grid-cols-12 gap-4 items-end group relative">
+                    <div className="col-span-12 md:col-span-5 space-y-1">
+                      <label className="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                        Variant Name
+                      </label>
+                      <input
+                        value={variant.name}
+                        onChange={(e) => {
+                          const nextValue = e.target.value;
+                          setFormData((prev) => {
+                            const newVariants = prev.variants.map((item, idx) => {
+                              if (idx !== index) return item;
+                              return { ...item, name: nextValue };
+                            });
+                            return {
+                              ...prev,
+                              variants: newVariants,
+                            };
+                          });
+                        }}
+                        placeholder="e.g. 1kg, 1 pack, 1 liter..."
+                        className="w-full px-3 py-2 bg-white ring-1 ring-slate-200 border-none rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                    <div className="col-span-6 md:col-span-2 space-y-1">
+                      <label className="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                        Price
+                      </label>
+                      <input
+                        type="number"
+                        value={variant.price}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].price = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        placeholder="500"
+                        className="w-full px-3 py-2 bg-white ring-1 ring-slate-200 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+                    <div className="col-span-6 md:col-span-2 space-y-1">
+                      <label className="text-[8px] font-bold text-brand-500 uppercase tracking-widest ml-1">
+                        Sale
+                      </label>
+                      <input
+                        type="number"
+                        value={variant.salePrice}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].salePrice = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        placeholder="450"
+                        className="w-full px-3 py-2 bg-brand-50 ring-1 ring-brand-100 border-none rounded-xl text-xs font-bold text-brand-700 outline-none focus:ring-2 focus:ring-brand-200"
+                      />
+                    </div>
+                    <div className="col-span-6 md:col-span-2 space-y-1">
+                      <label className="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                        Stock
+                      </label>
+                      <input
+                        type="number"
+                        value={variant.stock}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].stock = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        placeholder="10"
+                        className="w-full px-3 py-2 bg-white ring-1 ring-slate-200 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-primary/10"
+                      />
+                    </div>
+
+                    <div className="col-span-1 flex justify-end pb-1">
+                      <button
+                        onClick={() => {
+                          if (formData.variants.length > 1) {
+                            setFormData((prev) => {
+                              const remaining = prev.variants.filter((_, idx) => idx !== index);
+                              return { ...prev, variants: remaining };
+                            });
+                          }
+                        }}
+                        className="p-2 text-slate-300 hover:text-rose-500 transition-colors">
+                        <HiOutlineTrash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {modalTab === "category" && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Main Group <span className="text-rose-500">*</span>
+                  </label>
+                  <CustomSelect
+                    value={formData.header}
+                    onChange={(val) =>
+                      setFormData({ ...formData, header: val, category: "", subcategory: "" })
+                    }
+                    placeholder="Select Main Group"
+                    options={categories.map((h) => ({ value: h._id || h.id, label: h.name }))}
+                  />
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Specific Category <span className="text-rose-500">*</span>
+                  </label>
+                  <CustomSelect
+                    value={formData.category}
+                    onChange={(val) =>
+                      setFormData({ ...formData, category: val, subcategory: "" })
+                    }
+                    disabled={!formData.header}
+                    placeholder="Select Category"
+                    options={
+                      categories
+                        .find((h) => String(h._id || h.id) === String(formData.header))
+                        ?.children?.map((c) => ({ value: c._id || c.id, label: c.name })) || []
+                    }
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[10px] sm:text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                    Sub-Category <span className="text-rose-500">*</span>
+                  </label>
+                  <CustomSelect
+                    value={formData.subcategory}
+                    onChange={(val) =>
+                      setFormData({ ...formData, subcategory: val })
+                    }
+                    disabled={!formData.category}
+                    placeholder="Select Sub-Category"
+                    options={
+                      categories
+                        .find((h) => String(h._id || h.id) === String(formData.header))
+                        ?.children?.find((c) => String(c._id || c.id) === String(formData.category))
+                        ?.children?.map((sc) => ({ value: sc._id || sc.id, label: sc.name })) || []
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {modalTab === "media" && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-2 duration-300">
+              {/* Main Image Section */}
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                  Main Cover Photo
+                </label>
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                  <div className="w-48 aspect-square rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center group hover:border-primary hover:bg-primary/5 transition-all cursor-pointer overflow-hidden relative">
+                    <input
+                      type="file"
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      onChange={(e) => handleImageUpload(e, "main")}
+                    />
+                    {formData.mainImage ? (
+                      <img
+                        src={formData.mainImage}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <HiOutlinePhoto className="h-10 w-10 text-slate-200 group-hover:text-primary transition-colors" />
+                        <p className="text-[9px] font-bold text-slate-600 mt-2 uppercase tracking-widest group-hover:text-primary">
+                          Upload Cover
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-2 pt-2">
+                    <p className="text-xs font-bold text-slate-900">
+                      Choose a primary image
+                    </p>
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                      We show this image on the search page and the main
+                      store listing. Make sure it is clear and bright.
+                    </p>
+                    <button className="text-[10px] font-black text-primary uppercase tracking-wider hover:underline">
+                      Pick from Library
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gallery Section */}
+              <div className="space-y-3">
+                <label className="text-xs font-bold text-slate-600 uppercase tracking-widest ml-1">
+                  Gallery Photos (Max 5)
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className="aspect-square rounded-md border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center group hover:border-primary hover:bg-primary/5 transition-all cursor-pointer relative overflow-hidden">
+                      {formData.galleryImages[i - 1] ? (
+                        <img
+                          src={formData.galleryImages[i - 1]}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <>
+                          <input
+                            type="file"
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                            onChange={(e) => handleImageUpload(e, "gallery")}
+                          />
+                          <HiOutlinePlus className="h-5 w-5 text-slate-200 group-hover:text-primary transition-colors" />
+                          <p className="text-[8px] font-bold text-slate-600 mt-1 uppercase tracking-widest group-hover:text-primary">
+                            Add
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-600 font-medium italic text-center pt-4 border-t border-slate-50">
+                Quick Tip: Using WebP format at 800x800px makes your store load
+                3x faster.
+              </p>
+            </div>
+          )}
+
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddProduct;

@@ -1,0 +1,194 @@
+import mongoose from "mongoose";
+
+const productSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+
+        sku: {
+            type: String,
+            unique: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            trim: true,
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: 0,
+        },
+        salePrice: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        stock: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        isOutOfStock: {
+            type: Boolean,
+            default: false,
+        },
+        lowStockAlert: {
+            type: Number,
+            default: 5,
+        },
+        brand: {
+            type: String,
+            trim: true,
+        },
+        weight: {
+            type: String,
+            trim: true,
+        },
+        hsnCode: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        gstRate: {
+            type: Number,
+            default: 18,
+            min: 0,
+            max: 100,
+        },
+        upcNumber: {
+            type: String,
+            trim: true,
+            default: null,
+        },
+        tags: [{
+            type: String,
+            trim: true,
+        }],
+        mainImage: {
+            type: String, // Cloudinary URL
+        },
+        galleryImages: [{
+            type: String, // Array of Cloudinary URLs
+        }],
+        shelfLife: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        countryOfOrigin: {
+            type: String,
+            trim: true,
+            default: "India",
+        },
+        fssaiLicense: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        customerCare: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        foodPreference: {
+            type: String,
+            enum: ["veg", "non-veg", "none"],
+            default: "none",
+        },
+        headerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true,
+        },
+        categoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true,
+        },
+        subcategoryId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Category",
+            required: true,
+        },
+        sellerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Seller",
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "active",
+        },
+        approvalStatus: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "approved",
+        },
+        approvalRequestedAt: {
+            type: Date,
+            default: null,
+        },
+        approvalReviewedAt: {
+            type: Date,
+            default: null,
+        },
+        approvalReviewedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Admin",
+            default: null,
+        },
+        approvalNote: {
+            type: String,
+            trim: true,
+            default: "",
+        },
+        lastSubmittedByRole: {
+            type: String,
+            enum: ["seller", "admin"],
+            default: null,
+        },
+        variants: [
+            {
+                name: String,
+                price: Number,
+                salePrice: Number,
+                stock: Number,
+                sku: String,
+            }
+        ],
+        isFeatured: {
+            type: Boolean,
+            default: false,
+        },
+        isReturnable: {
+            type: Boolean,
+            default: false,
+        },
+        returnWindow: {
+            type: Number,
+            default: 7, // days
+        }
+    },
+    { timestamps: true }
+);
+
+// Optimize performance for common queries on home/search pages
+productSchema.index({ status: 1, isFeatured: 1, createdAt: -1 });
+productSchema.index({ status: 1, createdAt: -1, _id: -1 });
+productSchema.index({ approvalStatus: 1, status: 1, createdAt: -1 });
+productSchema.index({ headerId: 1, status: 1 });
+productSchema.index({ categoryId: 1, status: 1 });
+productSchema.index({ subcategoryId: 1, status: 1 });
+productSchema.index({ sellerId: 1, status: 1 });
+productSchema.index({ sellerId: 1, approvalStatus: 1, createdAt: -1 });
+productSchema.index({ sellerId: 1, createdAt: -1, _id: -1 });
+productSchema.index({ hsnCode: 1 });
+productSchema.index({ upcNumber: 1 });
+productSchema.index({ name: "text", tags: "text" }); // For better search if regex is too slow
+
+export default mongoose.model("Product", productSchema);

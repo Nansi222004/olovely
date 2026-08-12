@@ -1,0 +1,84 @@
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import DeliveryLayout from "../layout/DeliveryLayout";
+import { setActiveRole, ROLES } from "@core/auth/activeRoleStore";
+import Splash from "../pages/Splash";
+import DeliveryAuth from "../pages/DeliveryAuth";
+import Dashboard from "../pages/Dashboard";
+import OrderDetails from "../pages/OrderDetails";
+import Navigation from "../pages/Navigation";
+import DeliveryConfirmation from "../pages/DeliveryConfirmation";
+import EarningsPage from "../pages/EarningsPage";
+import EarningsHistoryPage from "../pages/EarningsHistoryPage";
+import CodCash from "../pages/CodCash";
+import OrderHistory from "../pages/OrderHistory";
+import Profile from "../pages/Profile";
+import PersonalDetails from "../pages/profile/PersonalDetails";
+import VehicleInfo from "../pages/profile/VehicleInfo";
+import BankAccount from "../pages/profile/BankAccount";
+import Documents from "../pages/profile/Documents";
+import SafetyPrivacy from "../pages/profile/SafetyPrivacy";
+import HelpSupport from "../pages/profile/HelpSupport";
+import Withdrawals from "../pages/profile/Withdrawals";
+import Bonuses from "../pages/profile/Bonuses";
+import Ratings from "../pages/profile/Ratings";
+import Notifications from "../pages/Notifications";
+import ServiceStatus from "../pages/ServiceStatus";
+import AvailableSlots from "../pages/AvailableSlots";
+import UpcomingSlots from "../pages/UpcomingSlots";
+
+import { lazyWithRetry as lazy } from "../../../shared/utils/lazyWithRetry";
+import DynamicPage from "../pages/DynamicPage";
+
+const BasketVerification = lazy(() => import("../pages/BasketVerification"));
+const BasketsInHand = lazy(() => import("../pages/BasketsInHand"));
+
+const DeliveryRoutes = () => {
+  useEffect(() => {
+    setActiveRole(ROLES.DELIVERY);
+  }, []);
+
+  return (
+    <Routes>
+      <Route element={<DeliveryLayout />}>
+        <Route path="splash" element={<Splash />} />
+
+        <Route path="auth" element={<DeliveryAuth />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="order-details/:orderId" element={<OrderDetails />} />
+        <Route path="navigation" element={<Navigation />} />
+        <Route path="confirm-delivery/:orderId" element={<DeliveryConfirmation />} />
+        <Route path="earnings" element={<EarningsPage />} />
+        <Route path="earnings/history" element={<EarningsHistoryPage />} />
+        <Route path="cod-cash" element={<CodCash />} />
+        <Route path="history" element={<OrderHistory />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="profile/personal-details" element={<PersonalDetails />} />
+        <Route path="profile/vehicle-info" element={<VehicleInfo />} />
+        <Route path="profile/bank-account" element={<BankAccount />} />
+        <Route path="profile/documents" element={<Documents />} />
+        <Route path="profile/safety-privacy" element={<SafetyPrivacy />} />
+        <Route path="profile/help-support" element={<HelpSupport />} />
+        <Route path="profile/withdrawals" element={<Withdrawals />} />
+        <Route path="profile/bonuses" element={<Bonuses />} />
+        <Route path="profile/ratings" element={<Ratings />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="basket-verify/:orderId" element={<BasketVerification />} />
+        <Route path="baskets-in-hand" element={<BasketsInHand />} />
+        
+        {/* Dynamic Pages */}
+        <Route path="page/:slug" element={<DynamicPage />} />
+
+        {/* Slot Routes */}
+        <Route path="status" element={<ServiceStatus />} />
+        <Route path="slots/available" element={<AvailableSlots />} />
+        <Route path="slots/upcoming" element={<UpcomingSlots />} />
+        
+        <Route path="/" element={<Navigate to="dashboard" replace />} />
+        <Route path="*" element={<Navigate to="dashboard" replace />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default DeliveryRoutes;
