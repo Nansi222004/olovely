@@ -78,6 +78,7 @@ const CustomerAuth = () => {
     const appName = settings?.appName || 'App';
     const logoUrl = settings?.logoUrl || '';
     const otpProvider = settings?.otpProvider || 'firebase';
+    const otpLength = otpProvider === 'firebase' ? 6 : 4;
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -166,8 +167,8 @@ const CustomerAuth = () => {
 
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
-        if (formData.otp.length !== 4 && formData.otp.length !== 6) {
-            toast.error('Enter valid code');
+        if (formData.otp.length !== otpLength) {
+            toast.error(`Enter valid ${otpLength}-digit code`);
             return;
         }
         if (otpProvider === 'firebase' && !window.confirmationResult) {
@@ -470,24 +471,25 @@ const CustomerAuth = () => {
 
                                     <form onSubmit={handleVerifyOtp} className="space-y-10">
                                         <div className="flex justify-center gap-2 sm:gap-3 w-full">
-                                            {[...Array(6)].map((_, i) => (
+                                            {[...Array(otpLength)].map((_, i) => (
                                                 <input
                                                     key={i}
                                                     type="tel"
                                                     maxLength={1}
-                                                    className="w-11 sm:w-12 h-12 sm:h-14 bg-gray-50 border border-gray-200 rounded-xl sm:rounded-2xl text-center text-xl font-black outline-none shadow-sm focus:bg-white focus:shadow-md focus:-translate-y-0.5 transition-all"
+                                                    value={formData.otp[i] || ''}
+                                                    className={`${otpLength > 4 ? "w-11 sm:w-12 h-12 sm:h-14 text-xl" : "w-13 sm:w-14 h-13 sm:h-14 text-2xl"} bg-gray-50 border border-gray-200 rounded-xl sm:rounded-2xl text-center font-black outline-none shadow-sm focus:bg-white focus:shadow-md focus:-translate-y-0.5 transition-all`}
                                                     style={{ color: activeCategory.theme }}
                                                     onKeyDown={(e) => {
                                                         if (e.key === 'Backspace' && !e.target.value && i > 0) {
-                                                            e.target.previousElementSibling.focus();
+                                                            e.target.previousElementSibling?.focus();
                                                         }
                                                     }}
                                                     onChange={(e) => {
                                                         const val = e.target.value;
-                                                        if (val && i < 5) (e.target.nextElementSibling).focus();
+                                                        if (val && i < otpLength - 1) (e.target.nextElementSibling)?.focus();
                                                         const otpArr = formData.otp.split('');
                                                         otpArr[i] = val;
-                                                        setFormData({ ...formData, otp: otpArr.join('') });
+                                                        setFormData({ ...formData, otp: otpArr.join('').slice(0, otpLength) });
                                                     }}
                                                     onFocus={(e) => e.target.style.borderColor = activeCategory.theme}
                                                     onBlur={(e) => e.target.style.borderColor = ''}
