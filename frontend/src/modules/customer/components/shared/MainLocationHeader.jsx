@@ -84,7 +84,15 @@ function CategoryNavColumn({
       }}
       className="relative z-[2] flex min-w-[48px] shrink-0 cursor-pointer flex-col items-center gap-0.5 border-b-2 px-2 pb-0.5 pt-0.5 snap-start md:min-w-[58px]">
       <div className="relative z-10 flex h-9 w-9 items-center justify-center md:h-11 md:w-11">
-        {typeof cat.icon === "function" ||
+        {cat.image ? (
+          <img
+            src={applyCloudinaryTransform(cat.image, "f_auto,q_auto,w_100")}
+            alt={cat.name}
+            loading="lazy"
+            className="h-7 w-7 md:h-8 md:w-8 object-cover rounded-full shadow-xs border border-white/40"
+            style={{ opacity: isActive ? 1 : 0.8 }}
+          />
+        ) : typeof cat.icon === "function" ||
           (typeof cat.icon === "object" && cat.icon.$$typeof) ? (
           <cat.icon
             sx={{
@@ -94,7 +102,7 @@ function CategoryNavColumn({
               transition: "opacity 0.2s, transform 0.2s",
             }}
           />
-        ) : (
+        ) : cat.icon ? (
           <img
             src={applyCloudinaryTransform(cat.icon, "f_auto,q_auto,w_100")}
             alt={cat.name}
@@ -102,7 +110,7 @@ function CategoryNavColumn({
             className="h-5 w-5 object-contain md:h-6 md:w-6"
             style={{ opacity: isActive ? 1 : 0.62 }}
           />
-        )}
+        ) : null}
       </div>
       <div className="relative mt-px w-full">
         <span
@@ -112,8 +120,9 @@ function CategoryNavColumn({
             isActive ? "font-black" : "font-extrabold",
           )}
           style={{
-            color: isActive ? iconColor : "#23461F",
-            opacity: isActive ? 1 : 0.9,
+            color: isActive ? iconColor : (headerFontColor === "#172033" || headerFontColor === "#111111" ? "#172033" : "#FFFFFF"),
+            opacity: isActive ? 1 : 0.88,
+            textShadow: (headerFontColor === "#172033" || headerFontColor === "#111111") ? "none" : "0 1px 3px rgba(0,0,0,0.5)",
           }}>
           {cat.name}
         </span>
@@ -584,10 +593,10 @@ const MainLocationHeader = ({
               }}
               className="relative flex items-end md:justify-center gap-0 overflow-x-auto no-scrollbar -mx-2 px-2 md:mx-0 md:px-0 z-10 snap-x pt-1 min-h-[68px] md:min-h-[76px] pb-0.5">
               {categories.slice(0, 10).map((cat) => {
-                const isActive = activeCategory?.id === cat.id;
+                const isActive = (activeCategory?.id && activeCategory.id === cat.id) || (activeCategory?._id && activeCategory._id === cat._id) || (activeCategory?.slug === cat.slug);
                 return (
                   <CategoryNavColumn
-                    key={cat.id}
+                    key={cat.id || cat._id}
                     cat={cat}
                     isActive={isActive}
                     categoryAccent={categoryAccent}

@@ -82,7 +82,7 @@ export class CashfreeAdapter extends PaymentProviderPort {
         return_url: redirectUrl + (redirectUrl.includes('?') ? '&' : '?') + "merchantOrderId=" + merchantOrderId,
         notify_url: `${process.env.API_URL || "http://localhost:5000"}/api/payments/webhook/callback`.replace(/^http:/i, "https:"),
       },
-      order_note: "Zoogno order payment",
+      order_note: "Olovely order payment",
     };
 
     logger.info("cashfree_create_order_request", {

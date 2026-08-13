@@ -425,13 +425,7 @@ const DeliveryAuth = () => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F0F4FF] flex flex-col items-center justify-center p-5 font-['Poppins',_sans-serif] overflow-hidden">
-      {/* Background blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-32 -left-32 w-80 h-80 bg-brand-200/40 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl" />
-      </div>
-
+    <div className="absolute inset-0 bg-[#F8FAFC] flex flex-col items-center justify-center p-5 font-['Poppins',_sans-serif] overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -439,20 +433,20 @@ const DeliveryAuth = () => {
         className="w-full max-w-[420px] relative z-10"
       >
         {/* Card */}
-        <div className="bg-white rounded-[2.5rem] shadow-[0_24px_60px_rgba(99,102,241,0.1)] border border-brand-50 overflow-hidden">
+        <div className="bg-white rounded-3xl shadow-xl border border-[#E2E8F0] overflow-hidden">
 
           {/* Header with Lottie */}
-          <div className="bg-gradient-to-br from-brand-50 to-purple-50 p-8 flex flex-col items-center relative">
+          <div className="bg-white p-8 flex flex-col items-center relative border-b border-[#E2E8F0]">
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
-              <div className="w-14 h-14 rounded-2xl bg-white/85 backdrop-blur-sm border border-brand-100 shadow-sm flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-2xl bg-white border border-[#E2E8F0] shadow-sm flex items-center justify-center p-2 overflow-hidden">
                 {logoUrl ? (
                   <img
                     src={logoUrl}
                     alt={`${appName} logo`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
-                  <ShieldCheck className="w-5 h-5 text-brand-600" />
+                  <ShieldCheck className="w-6 h-6 text-[#123B8E]" />
                 )}
               </div>
             </div>
@@ -553,7 +547,7 @@ const DeliveryAuth = () => {
                               <label
                                 htmlFor="profile-upload"
                                 onClick={(e) => handleCameraClick(e, 'profile')}
-                                className="absolute -bottom-2 -right-2 p-2.5 bg-black  text-primary-foreground rounded-2xl shadow-lg shadow-brand-200 cursor-pointer hover:bg-brand-700 hover:scale-110 active:scale-95 transition-all"
+                                className="absolute -bottom-2 -right-2 p-2.5 bg-primary text-primary-foreground rounded-2xl shadow-lg cursor-pointer hover:bg-brand-700 hover:scale-110 active:scale-95 transition-all"
                               >
                                 <Camera className="w-4 h-4" />
                               </label>
@@ -630,7 +624,7 @@ const DeliveryAuth = () => {
                               }
                               setSignupStep(2);
                             }}
-                            className="w-full py-4 bg-black  text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg shadow-brand-200 hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-4 bg-primary text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
                           >
                             Next Step <ArrowRight className="w-4 h-4" />
                           </button>
@@ -734,7 +728,7 @@ const DeliveryAuth = () => {
                                 }
                                 setSignupStep(3);
                               }}
-                              className="flex-[2] py-4 bg-black  text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg shadow-brand-200 hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
+                              className="flex-[2] py-4 bg-primary text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
                             >
                               Next Step <ArrowRight className="w-4 h-4" />
                             </button>
@@ -835,7 +829,7 @@ const DeliveryAuth = () => {
                                 }
                                 setSignupStep(4);
                               }}
-                              className="flex-[2] py-4 bg-black  text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg shadow-brand-200 hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
+                              className="flex-[2] py-4 bg-primary text-primary-foreground rounded-2xl text-sm font-black tracking-widest uppercase shadow-lg hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
                             >
                               Next Step <ArrowRight className="w-4 h-4" />
                             </button>

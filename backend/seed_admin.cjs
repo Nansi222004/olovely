@@ -1,7 +1,8 @@
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcrypt');
 
-const MONGO_URI = 'mongodb+srv://zoogno:zoognuapp123@cluster0.bj0klhd.mongodb.net/Quick_commerce?retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/quickcommerce';
 
 async function seedAdmin() {
   let client;

@@ -103,8 +103,12 @@ const Header = () => {
                 <div className="px-4 md:px-8 h-18 bg-white/95 backdrop-blur-sm rounded-full shadow-2xl flex items-center justify-between border border-white/20">
                     {/* Logo */}
                     <div className="flex items-center gap-6 mr-4 md:mr-12">
-                        <Link to="/" className="flex items-center gap-1">
-                            <span className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: settings?.primaryColor || 'var(--primary)' }}>{settings?.appName || 'App'}</span>
+                        <Link to="/" className="flex items-center gap-2">
+                            {settings?.logoUrl ? (
+                                <img src={settings.logoUrl} alt={settings?.appName || 'Olovely'} className="h-8 md:h-10 object-contain rounded-lg" />
+                            ) : (
+                                <span className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: settings?.primaryColor || 'var(--primary)' }}>{settings?.appName || 'Olovely'}</span>
+                            )}
                         </Link>
 
                         {/* Location Selector (Desktop ONLY) */}

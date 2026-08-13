@@ -4,10 +4,14 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Brand colors: overridden at runtime by SettingsContext from API (settings.primaryColor, settings.secondaryColor) */
-  --primary: #0284c7; /* Default brand blue */
-  --primary-color: #0284c7;
-  
+  /* Brand colors: Olovely Total Suvidha Palette */
+  --primary: #123B8E; /* Royal / Deep Blue */
+  --primary-color: #123B8E;
+  --secondary-blue: #1976D2; /* Bright Blue */
+  --brand-green: #16A34A; /* Status Green / Fresh Highlights */
+  --brand-yellow: #F4B400; /* Offers / Rating Yellow */
+  --brand-red: #E53935; /* Warnings / Error Red */
+
   /* Dynamic Brand Shades based on primary */
   --brand-50: color-mix(in srgb, var(--primary), white 95%);
   --brand-100: color-mix(in srgb, var(--primary), white 90%);
@@ -22,46 +26,50 @@
   --brand-950: color-mix(in srgb, var(--primary), black 80%);
 
   --primary-dark: var(--brand-700);
-  --radius: 0.5rem;
-  --background: oklch(0.99 0.005 260);
-  --foreground: oklch(0.15 0.02 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 260);
+  --radius: 0.75rem;
+  --background: #F8FAFC;
+  --foreground: #172033;
+  --card: #FFFFFF;
+  --card-foreground: #172033;
+  --popover: #FFFFFF;
+  --popover-foreground: #172033;
   --primary-foreground: #FFFFFF;
-  --secondary: oklch(0.96 0.01 260);
-  --secondary-color: var(--secondary);
-  --secondary-foreground: oklch(0.2 0.03 260);
-  --muted: oklch(0.96 0.01 260);
-  --muted-foreground: oklch(0.5 0.02 260);
-  --accent: oklch(0.96 0.02 260);
-  --accent-foreground: oklch(0.2 0.03 260);
-  --destructive: oklch(0.6 0.23 25);
-  --border: oklch(0.92 0.01 260);
-  --input: oklch(0.92 0.01 260);
-  --ring: oklch(0.6 0.15 260);
+  --secondary: #1976D2;
+  --secondary-color: #1976D2;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
+  --accent: #F1F5F9;
+  --accent-foreground: #172033;
+  --destructive: #E53935;
+  --border: #E2E8F0;
+  --input: #E2E8F0;
+  --ring: #123B8E;
 
   /* Additional UI Variables */
-  --sidebar-dark: oklch(0.18 0.03 260);
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --sidebar-dark: #0F172A;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 232, 240, 0.8);
 
-  /* Cart pill fill — overridden on Home by MainLocationHeader */
+  /* Cart pill fill */
   --customer-mini-cart-color: var(--primary);
 
   /* --- Context-Aware Chat UI Theme --- */
-  --chat-bg-dark: #092C17;
-  --chat-primary: #54B44D;
-  --chat-bright: #7BB120;
-  --chat-deep: #2C7420;
-  --chat-accent: #F4B10F;
-  --chat-light: #F2F3F3;
+  --chat-bg-dark: #0F172A;
+  --chat-primary: var(--primary);
+  --chat-bright: var(--secondary-blue);
+  --chat-deep: #0E2A66;
+  --chat-accent: var(--brand-yellow);
+  --chat-light: #F8FAFC;
 }
 
 .delivery-theme {
-  --primary: #135d1f;
-  --primary-color: #135d1f;
+  --primary: #123B8E;
+  --primary-color: #123B8E;
+  --secondary-blue: #1976D2;
+  --brand-green: #16A34A;
+  --brand-yellow: #F4B400;
+  --brand-red: #E53935;
   --brand-50: color-mix(in srgb, var(--primary), white 95%);
   --brand-100: color-mix(in srgb, var(--primary), white 90%);
   --brand-200: color-mix(in srgb, var(--primary), white 70%);

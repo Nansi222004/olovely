@@ -190,7 +190,7 @@ export const printBagLabel = async (labelData, qrDataUrl) => {
     pdf.setTextColor(255, 255, 255);
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(9);
-    pdf.text('ZOOGNU DELIVERY', 38, 5.5, { align: 'center' });
+    pdf.text('OLOVELY DELIVERY', 38, 5.5, { align: 'center' });
     pdf.setFontSize(7);
     pdf.setFont('helvetica', 'normal');
     pdf.text('Quick Commerce', 38, 10, { align: 'center' });

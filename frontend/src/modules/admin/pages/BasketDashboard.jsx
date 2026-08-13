@@ -150,7 +150,7 @@ const BasketDashboard = () => {
                 pdf.text(bag.basketId, x + (qrSize / 2), y + qrSize + 5, { align: 'center' });
             }
 
-            pdf.save(`zoognu-baskets-page${page}-${Date.now()}.pdf`);
+            pdf.save(`olovely-baskets-page${page}-${Date.now()}.pdf`);
         } catch (error) {
             console.error("QR Download Error:", error);
             toast.error("Failed to generate QR PDF");

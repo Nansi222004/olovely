@@ -139,15 +139,15 @@ const CategoriesPage = () => {
     }, [flipRows]);
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-[#F8FAFC]">
             <SEO title="Categories" description="Browse all product categories" />
             <MainLocationHeader />
             {isLoading && <LottieLoader fullScreen />}
-            <div className="max-w-[1280px] mx-auto px-4 pt-[180px] md:pt-[150px] pb-20">
+            <div className="max-w-[1280px] mx-auto px-4 pt-[180px] md:pt-[150px] pb-24">
                 {groups.map((group, groupIdx) => (
-                    <div key={groupIdx} className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${groupIdx * 100}ms` }}>
+                    <div key={groupIdx} className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${groupIdx * 100}ms` }}>
                         {/* Group Title */}
-                        <h2 className="text-xl md:text-2xl font-black text-[#1A1A1A] mb-6 px-1">
+                        <h2 className="text-lg md:text-xl font-bold text-[#172033] mb-5 px-1 tracking-tight">
                             {group.title}
                         </h2>
 

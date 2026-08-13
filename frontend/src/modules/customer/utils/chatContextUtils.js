@@ -66,7 +66,7 @@ export const getChatHeaderConfig = (context, order) => {
         case CHAT_CONTEXTS.ZOOGNO_SUPPORT:
         default:
             return {
-                title: 'Zoogno Support',
+                title: 'Olovely Support',
                 subtitle: order ? `Query regarding Order #${order.orderId}` : 'How can we help you?',
                 bgColor: 'var(--chat-bg-dark)',
             };

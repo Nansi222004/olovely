@@ -133,7 +133,7 @@ const BasketCreate = () => {
             pdf.text(id, x + (qrSize / 2), y + qrSize + 5, { align: 'center' });
         });
 
-        pdf.save(`zoognu-baskets-${created.basketIds.length}-${Date.now()}.pdf`);
+        pdf.save(`olovely-baskets-${created.basketIds.length}-${Date.now()}.pdf`);
     };
 
     const handleDownloadIndividual = (id) => {

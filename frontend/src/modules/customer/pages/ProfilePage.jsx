@@ -111,29 +111,31 @@ const ProfilePage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-24 md:pb-8 font-sans">
-            <div className="sticky top-0 z-30 bg-slate-50/95 backdrop-blur-sm px-4 pt-4 pb-3 border-b border-slate-200/60 mb-4 flex items-center">
-                <h1 className="text-xl font-semibold text-slate-900 tracking-tight">My Profile</h1>
+        <div className="min-h-screen bg-[#F8FAFC] pb-24 md:pb-8 font-sans">
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm px-4 pt-3.5 pb-3.5 border-b border-[#E2E8F0] mb-4 flex items-center shadow-2xs">
+                <h1 className="text-lg font-bold text-[#172033] tracking-tight">My Profile</h1>
             </div>
 
             <div className="max-w-2xl mx-auto px-4 pt-1 relative z-20 space-y-4">
 
                 {/* User Identity Card */}
-                <div className="bg-white rounded-xl p-4 border border-slate-200 flex items-center justify-between">
+                <div className="bg-white rounded-2xl p-4 border border-[#E2E8F0] shadow-2xs flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="h-14 w-14 rounded-xl bg-slate-100 flex items-center justify-center p-1 border border-slate-200">
-                            <div className="h-full w-full rounded-lg bg-white flex items-center justify-center overflow-hidden">
-                                <User size={28} className="text-slate-700" />
-                            </div>
+                        <div className="h-12 w-12 rounded-2xl bg-[#EFF6FF] text-[#123B8E] flex items-center justify-center border border-blue-100 overflow-hidden shadow-2xs shrink-0">
+                            {user?.avatar ? (
+                                <img src={user.avatar} alt={user?.name || "Profile"} className="w-full h-full object-cover" />
+                            ) : (
+                                <User size={24} />
+                            )}
                         </div>
                         <div>
-                            <h2 className="text-base leading-tight font-semibold text-slate-900">{user?.name || 'Customer'}</h2>
-                            <p className="text-slate-500 text-xs font-medium flex items-center gap-1 mt-0.5">
-                                <span className="bg-slate-100 px-1.5 py-0.5 rounded text-[10px] uppercase">India</span> +91 {formatIndiaPhone(user?.phone)}
+                            <h2 className="text-base font-bold text-[#172033]">{user?.name || 'Customer'}</h2>
+                            <p className="text-[#64748B] text-xs font-semibold flex items-center gap-1 mt-0.5">
+                                <span className="bg-[#EFF6FF] text-[#123B8E] px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase">India</span> +91 {formatIndiaPhone(user?.phone)}
                             </p>
                         </div>
                     </div>
-                    <Link to="/profile/edit" className="p-2.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
+                    <Link to="/profile/edit" className="p-2.5 rounded-xl bg-[#F8FAFC] text-[#123B8E] hover:bg-[#EFF6FF] border border-[#E2E8F0] transition-colors">
                         <Edit2 size={16} />
                     </Link>
                 </div>
@@ -141,80 +143,80 @@ const ProfilePage = () => {
                 {/* Menu Sections */}
                 <div className="space-y-4">
                     {/* Account Section */}
-                    <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
-                        <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
-                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Personal Account</p>
+                    <div className="bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-2xs">
+                        <div className="px-4 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Personal Account</p>
                         </div>
-                        <div className="divide-y divide-slate-100">
+                        <div className="divide-y divide-[#E2E8F0]">
                             <MenuItem
                                 icon={Package}
                                 label="Your Orders"
-                                sub="Track, return or buy things again"
+                                sub="Track, return or buy items again"
                                 path="/orders"
-                                color="var(--primary)"
-                                bg="rgba(16,185,129,0.10)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                             <MenuItem
                                 icon={CreditCard}
                                 label="Order Transactions"
                                 sub="View all payments & refunds"
                                 path="/transactions"
-                                color="#f97316"
-                                bg="rgba(249,115,22,0.10)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                             <MenuItem
                                 icon={Wallet}
                                 label="Wallet"
                                 sub="Balance & return refunds"
                                 path="/wallet"
-                                color="#10b981"
-                                bg="rgba(16,185,129,0.10)"
+                                color="#16A34A"
+                                bg="#F0FDF4"
                             />
                             <MenuItem
                                 icon={Heart}
                                 label="Your Wishlist"
                                 sub="Your saved items"
                                 path="/wishlist"
-                                color="#fb7185"
-                                bg="rgba(248,113,113,0.08)"
+                                color="#E53935"
+                                bg="#FEF2F2"
                             />
                             <MenuItem
                                 icon={MapPin}
                                 label="Saved Addresses"
                                 sub="Manage your delivery locations"
                                 path="/addresses"
-                                color="var(--primary)"
-                                bg="rgba(56,189,248,0.10)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                         </div>
                     </div>
 
                     {/* Support Section */}
-                    <div className="bg-white rounded-xl overflow-hidden border border-slate-200">
-                        <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
-                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">Help & Settings</p>
+                    <div className="bg-white rounded-2xl overflow-hidden border border-[#E2E8F0] shadow-2xs">
+                        <div className="px-4 py-2.5 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+                            <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">Help & Settings</p>
                         </div>
-                        <div className="divide-y divide-slate-100">
+                        <div className="divide-y divide-[#E2E8F0]">
                             <MenuItem
                                 icon={HelpCircle}
                                 label="Help & Support"
                                 path="/support"
-                                color="#3b82f6"
-                                bg="rgba(59,130,246,0.08)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                             <MenuItem
                                 icon={ShieldCheck}
                                 label="Privacy Policy"
                                 path="/privacy"
-                                color="#a855f7"
-                                bg="rgba(168,85,247,0.08)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                             <MenuItem
                                 icon={Info}
                                 label="About Us"
                                 path="/about"
-                                color="#14b8a6"
-                                bg="rgba(45,212,191,0.08)"
+                                color="#123B8E"
+                                bg="#EFF6FF"
                             />
                         </div>
                     </div>
@@ -223,14 +225,14 @@ const ProfilePage = () => {
                 {/* Logout Button */}
                 <button
                     onClick={logout}
-                    className="w-full py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold bg-white hover:bg-slate-100 transition-colors flex items-center justify-center gap-2 mt-2"
+                    className="w-full py-3 rounded-2xl border border-red-200 text-[#E53935] font-bold bg-white hover:bg-[#FEF2F2] transition-colors flex items-center justify-center gap-2 mt-2 shadow-2xs active:scale-98"
                 >
-                    <LogOut size={20} />
+                    <LogOut size={18} />
                     Sign out
                 </button>
 
-                <div className="text-center pb-8">
-                    <p className="text-[10px] text-slate-400 font-medium">Version 2.4.0 - {appName}</p>
+                <div className="text-center pb-8 pt-2">
+                    <p className="text-[10px] text-[#64748B] font-semibold">Version 2.4.0 • {appName}</p>
                 </div>
 
             </div>

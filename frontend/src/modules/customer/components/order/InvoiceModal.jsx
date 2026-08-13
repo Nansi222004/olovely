@@ -85,10 +85,9 @@ const InvoiceModal = ({ isOpen, onClose, order }) => {
                             <div className="p-4 sm:p-8 space-y-6 overflow-y-auto flex-1" id="printable-invoice">
                                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                                     <div className="max-w-full sm:max-w-[65%]">
-                                        {appName.toLowerCase() === 'zoogno' ? (
-                                            <h1 className="text-2xl font-black tracking-tight flex items-center">
-                                                <span style={{ color: primaryColor }}>Zoog</span>
-                                                <span style={{ color: '#135d1f' }}>no</span>
+                                        {(appName || '').toLowerCase() === 'olovely' ? (
+                                            <h1 className="text-2xl font-black tracking-tight flex items-center" style={{ color: primaryColor }}>
+                                                Olovely
                                             </h1>
                                         ) : (
                                             <h1 className="text-2xl font-black tracking-tight" style={{ color: primaryColor }}>{appName}</h1>

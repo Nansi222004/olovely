@@ -103,7 +103,24 @@ const CategoryProductsPage = () => {
                 const tree = catRes.data.results || catRes.data.result || [];
                 const type = searchParams.get("type");
                 let currentCat = null;
-                if (type === "header") {
+
+                if (catId === "all") {
+                    setCategory({ name: "All Products", _id: "all", headerColor: "#123B8E" });
+                    const allCategories = [];
+                    for (const header of tree) {
+                        for (const child of (header.children || [])) {
+                            allCategories.push({
+                                id: child._id,
+                                name: child.name,
+                                icon: child.image || "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=200"
+                            });
+                        }
+                    }
+                    setSubCategories([
+                        { id: "all", name: "All", icon: "" },
+                        ...allCategories
+                    ]);
+                } else if (type === "header") {
                     currentCat = tree.find(h => h._id === catId);
                 } else {
                     for (const header of tree) {
@@ -115,14 +132,17 @@ const CategoryProductsPage = () => {
                     }
                 }
 
-                if (currentCat) {
+                if (currentCat && catId !== "all") {
                     setCategory(currentCat);
                     const subs = (currentCat.children || []).map(s => ({
                         id: s._id,
                         name: s.name,
-                        icon: s.image || 'https://cdn-icons-png.flaticon.com/128/2321/2321801.png'
+                        icon: s.image || ""
                     }));
-                    setSubCategories([{ id: 'all', name: 'All', icon: 'https://cdn-icons-png.flaticon.com/128/2321/2321831.png' }, ...subs]);
+                    setSubCategories([
+                        { id: "all", name: "All", icon: "" },
+                        ...subs
+                    ]);
                 }
             }
         } catch (error) {
@@ -158,36 +178,46 @@ const CategoryProductsPage = () => {
     }, [safeProducts]);
 
     return (
-        <div className="flex flex-col min-h-screen bg-white relative font-sans">
+        <div className="flex flex-col min-h-screen bg-[#F8FAFC] relative font-sans">
             <SEO
                 title={category?.name || "Category Products"}
                 description={`Browse products in ${category?.name || "this category"}`}
             />
             {/* Header */}
             <header className={cn(
-                "sticky top-0 z-50 bg-white border-b border-gray-50 px-4 py-4 flex items-center justify-between",
+                "sticky top-0 z-50 bg-[#123B8E] border-b border-[#0B255C] px-4 py-3 flex items-center justify-between shadow-md text-white transition-colors duration-300",
                 isProductDetailOpen && "hidden md:flex"
             )}>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-1 hover:bg-gray-50 rounded-full transition-colors"
+                        className="p-1.5 hover:bg-white/10 active:scale-95 rounded-full transition-all text-white cursor-pointer"
+                        aria-label="Go Back"
                     >
-                        <ChevronLeft size={24} className="text-gray-900" />
+                        <ChevronLeft size={22} strokeWidth={2.5} />
                     </button>
-                    <h1 className="text-[18px] font-bold text-gray-800 tracking-tight">
-                        {category?.name || catId}
+                    <h1 className="text-base sm:text-lg font-black tracking-tight text-white capitalize">
+                        {category?.name || (catId === "all" ? "All Products" : catId)}
                     </h1>
                 </div>
-                <div className="text-sm font-medium text-gray-500">
-                    Total product is {filteredProducts.length}
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={() => navigate("/search")} 
+                        className="p-1.5 hover:bg-white/10 rounded-full transition-all text-white cursor-pointer"
+                        aria-label="Search"
+                    >
+                        <Search size={19} strokeWidth={2.5} />
+                    </button>
+                    <span className="text-[11px] sm:text-xs font-black bg-white/20 backdrop-blur-xs px-2.5 py-1 rounded-full text-white tracking-wide">
+                        {filteredProducts.length} Products
+                    </span>
                 </div>
             </header>
 
             <div className="flex flex-1 relative items-start">
                 {(safeProducts.length === 0 && !isLoading) ? (
-                    <div className="w-full flex-1 py-20 px-8 flex flex-col items-center justify-center text-center">
-                        <div className="w-64 h-64 mb-6 rounded-3xl overflow-hidden">
+                    <div className="w-full flex-1 py-16 px-6 flex flex-col items-center justify-center text-center">
+                        <div className="w-48 h-48 mb-4 rounded-3xl overflow-hidden">
                             <video 
                                 src="/coming-soon-animation-gif-download-10839535.mp4" 
                                 autoPlay 
@@ -197,15 +227,15 @@ const CategoryProductsPage = () => {
                                 className="w-full h-full object-contain"
                             />
                         </div>
-                        <h3 className="text-3xl font-[1000] text-slate-800 tracking-tighter mb-4 uppercase">
-                            No <span className="text-primary">Products</span>
+                        <h3 className="text-xl font-bold text-[#172033] tracking-tight mb-2 uppercase">
+                            No <span className="text-[#123B8E]">Products Found</span>
                         </h3>
-                        <p className="text-slate-500 font-bold text-sm max-w-[280px] mb-8 leading-relaxed">
-                            We couldn't find any products in this category at your current location. Check back later!
+                        <p className="text-[#64748B] font-medium text-sm max-w-[280px] mb-6 leading-relaxed">
+                            We couldn't find any products in this category at your current location. Check back soon!
                         </p>
                         <button
                             onClick={() => navigate('/')}
-                            className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-800 active:scale-95 transition-all shadow-xl shadow-black/10"
+                            className="px-8 py-3 bg-[#123B8E] hover:bg-[#1976D2] text-white rounded-xl font-bold text-sm uppercase tracking-wider active:scale-95 transition-all shadow-sm"
                         >
                             Continue Shopping
                         </button>
@@ -213,27 +243,33 @@ const CategoryProductsPage = () => {
                 ) : (
                     <>
                         {/* Sidebar */}
-                        <aside className="w-[70px] md:w-64 border-r border-gray-50 flex flex-col bg-white overflow-y-auto hide-scrollbar sticky top-[60px] h-[calc(100vh-60px)] pb-32 flex-shrink-0">
+                        <aside className="w-[82px] sm:w-24 md:w-64 border-r border-[#E2E8F0] flex flex-col bg-white overflow-y-auto hide-scrollbar sticky top-[60px] h-[calc(100vh-60px)] pb-32 flex-shrink-0 shadow-2xs">
                             {subCategories.map((cat) => (
                                 <button
                                     key={cat.id}
                                     onClick={() => setSelectedSubCategory(cat.id)}
                                     className={cn(
-                                        "flex flex-col md:flex-row items-center py-4 px-1 md:px-4 gap-2 md:gap-4 transition-all relative border-l-4",
+                                        "flex flex-col md:flex-row items-center py-3 px-1 md:px-4 gap-1.5 md:gap-3 transition-all relative border-l-4 cursor-pointer active:scale-95 select-none",
                                         selectedSubCategory === cat.id
-                                            ? "bg-[#F7FCF5] border-primary"
-                                            : "border-transparent hover:bg-gray-50"
+                                            ? "bg-[#EFF6FF] border-[#123B8E] text-[#123B8E] font-black shadow-2xs"
+                                            : "border-transparent text-[#64748B] hover:bg-slate-50"
                                     )}
                                 >
                                     <div className={cn(
-                                        "w-14 h-14 md:w-12 md:h-12 rounded-2xl flex items-center justify-center p-1.5 transition-all duration-300 flex-shrink-0",
-                                        selectedSubCategory === cat.id ? "scale-110" : "opacity-100"
+                                        "w-11 h-11 sm:w-12 sm:h-12 md:w-10 md:h-10 rounded-2xl flex items-center justify-center p-1 transition-all duration-200 flex-shrink-0 bg-white border shadow-2xs overflow-hidden",
+                                        selectedSubCategory === cat.id ? "scale-105 border-[#123B8E] ring-2 ring-[#123B8E]/20" : "border-slate-200 opacity-90"
                                     )}>
-                                        <img src={applyCloudinaryTransform(cat.icon)} alt={cat.name} loading="lazy" className="w-full h-full object-contain" />
+                                        {cat.icon ? (
+                                            <img src={applyCloudinaryTransform(cat.icon, "f_auto,q_auto,w_150")} alt={cat.name} loading="lazy" className="w-full h-full object-cover rounded-xl" />
+                                        ) : (
+                                            <div className="w-full h-full bg-linear-to-br from-[#123B8E] to-[#1976D2] rounded-xl flex items-center justify-center text-white font-black text-xs">
+                                                {cat.name.slice(0, 2).toUpperCase()}
+                                            </div>
+                                        )}
                                     </div>
                                     <span className={cn(
-                                        "text-[10px] md:text-sm text-center md:text-left font-bold font-sans leading-tight px-1 flex-1",
-                                        selectedSubCategory === cat.id ? "text-primary" : "text-gray-600"
+                                        "text-[10px] md:text-xs text-center md:text-left font-bold leading-tight px-0.5 flex-1 line-clamp-2",
+                                        selectedSubCategory === cat.id ? "text-[#123B8E]" : "text-[#475569]"
                                     )}>
                                         {cat.name}
                                     </span>
@@ -242,8 +278,8 @@ const CategoryProductsPage = () => {
                         </aside>
 
                         {/* Content */}
-                        <main className="flex-1 p-2 md:p-6 pb-24 bg-white space-y-4 overflow-x-hidden">
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-2 gap-y-3 md:gap-4 lg:gap-6">
+                        <main className="flex-1 p-2.5 md:p-6 pb-24 bg-[#F8FAFC] space-y-4 overflow-x-hidden">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
                                 {filteredProducts.map((product) => (
                                     <ProductCard key={product.id} product={product} compact={true} />
                                 ))}

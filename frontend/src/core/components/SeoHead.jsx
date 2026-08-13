@@ -10,7 +10,7 @@ export default function SeoHead() {
 
     if (!settings) return null;
 
-    const title = settings.metaTitle || settings.appName || 'Appzeto';
+    const title = settings.metaTitle || settings.appName || 'Olovely';
     const desc = settings.metaDescription || '';
     const keywordsContent = (Array.isArray(settings.keywords) && settings.keywords.length)
         ? settings.keywords.join(', ')
@@ -18,7 +18,7 @@ export default function SeoHead() {
     const faviconUrl = settings.faviconUrl || '/vite.svg';
 
     return (
-        <Helmet defaultTitle={title} titleTemplate={`%s | ${settings.appName || 'Appzeto'}`}>
+        <Helmet defaultTitle={title} titleTemplate={`%s | ${settings.appName || 'Olovely'}`}>
             <meta name="description" content={desc} />
             {keywordsContent && <meta name="keywords" content={keywordsContent} />}
             <link id="dynamic-favicon" rel="icon" type="image/x-icon" href={faviconUrl} />

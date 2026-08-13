@@ -21,7 +21,7 @@ export function buildKey(domain, entity, id = "") {
 }
 
 /**
- * Safe get
+ * Safe get (parses JSON if possible, otherwise returns raw string)
  */
 export async function get(key) {
   const client = getRedisClient();
@@ -29,10 +29,30 @@ export async function get(key) {
   
   try {
     const data = await client.get(key);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    try {
+      return JSON.parse(data);
+    } catch {
+      return data;
+    }
   } catch (error) {
     logger.error("RedisManager GET Error", { key, error: error.message });
     return null; // Graceful fallback
+  }
+}
+
+/**
+ * Get raw string value without attempting JSON parsing
+ */
+export async function getRaw(key) {
+  const client = getRedisClient();
+  if (!client) return null;
+
+  try {
+    return await client.get(key);
+  } catch (error) {
+    logger.error("RedisManager GET_RAW Error", { key, error: error.message });
+    return null;
   }
 }
 

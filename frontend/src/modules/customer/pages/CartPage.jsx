@@ -36,23 +36,17 @@ const CartPage = () => {
     };
 
     return (
-        <div className="relative isolate w-full overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(12,131,31,0.14),_transparent_34%),linear-gradient(180deg,_#f8faf9_0%,_#eef6f0_100%)] animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="pointer-events-none absolute inset-0">
-                <div className="absolute -top-16 -right-16 h-52 w-52 rounded-full bg-brand-300/20 blur-3xl" />
-                <div className="absolute top-24 left-[-5rem] h-56 w-56 rounded-full bg-lime-200/40 blur-3xl" />
-                <div className="absolute bottom-0 right-1/3 h-36 w-36 rounded-full bg-white/60 blur-2xl" />
-            </div>
-
-            <div className="relative mx-auto w-full max-w-[1440px] px-4 md:px-8 lg:px-12 py-6 md:py-8 lg:py-10">
+        <div className="min-h-screen w-full bg-[#F8FAFC] py-6 md:py-8 lg:py-10 pb-24">
+            <div className="mx-auto w-full max-w-[1440px] px-4 md:px-8 lg:px-12">
                 {cart.length > 0 ? (
                     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_26rem]">
                         <section className="space-y-4">
                             <div className="flex items-center justify-between px-1">
-                                <h2 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
-                                    Your items
+                                <h2 className="text-lg md:text-xl font-bold text-[#172033] tracking-tight">
+                                    Your Cart Items
                                 </h2>
-                                <span className="rounded-full bg-white/85 px-3 py-1 text-xs font-bold text-slate-500 border border-slate-200">
-                                    {itemCount} total
+                                <span className="rounded-full bg-white px-3 py-1 text-xs font-bold text-[#64748B] border border-[#E2E8F0]">
+                                    {itemCount} items
                                 </span>
                             </div>
 
@@ -60,67 +54,62 @@ const CartPage = () => {
                                 {cart.map((item) => (
                                     <article
                                         key={`${item.id}::${String(item.variantSku || "").trim()}`}
-                                        className="group overflow-hidden rounded-[1.5rem] border border-white/80 bg-white/85 backdrop-blur-sm shadow-[0_12px_35px_rgba(15,23,42,0.08)] transition-transform duration-300 hover:-translate-y-0.5"
+                                        className="overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-2xs transition-all hover:shadow-xs"
                                     >
-                                        <div className="flex gap-4 p-4 md:p-5">
-                                            <div className="h-24 w-24 md:h-28 md:w-28 flex-shrink-0 overflow-hidden rounded-2xl bg-slate-50 ring-1 ring-slate-100">
+                                        <div className="flex gap-4">
+                                            <div className="h-20 w-20 md:h-24 md:w-24 flex-shrink-0 overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-1">
                                                 <img
                                                     src={applyCloudinaryTransform(item.image)}
                                                     alt={item.name}
                                                     loading="lazy"
-                                                    className="h-full w-full object-cover"
+                                                    className="h-full w-full object-cover rounded-lg"
                                                 />
                                             </div>
 
-                                            <div className="min-w-0 flex-1">
+                                            <div className="min-w-0 flex-1 flex flex-col justify-between">
                                                 <div className="flex items-start justify-between gap-3">
                                                     <div className="min-w-0">
-                                                        <span className="inline-flex rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-brand-700">
-                                                            {item.category}
+                                                        <span className="inline-flex rounded-md bg-[#EFF6FF] px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-[#123B8E]">
+                                                            {item.category || "Item"}
                                                         </span>
-                                                        <h3 className="mt-2 truncate text-lg md:text-xl font-black tracking-tight text-slate-900">
+                                                        <h3 className="mt-1 truncate text-sm md:text-base font-bold text-[#172033]">
                                                             {item.name}
                                                         </h3>
-                                                        <p className="mt-1 text-sm font-medium text-slate-500">
-                                                            1 kg
+                                                        <p className="text-xs font-medium text-[#64748B]">
+                                                            {item.weight || "1 unit"}
                                                         </p>
                                                     </div>
 
                                                     <button
                                                         onClick={() => handleRemove(item.id, item.name, item.variantSku)}
-                                                        className="rounded-full border border-slate-200 bg-white p-2 text-slate-400 transition-colors hover:border-rose-200 hover:text-rose-500"
+                                                        className="rounded-full border border-[#E2E8F0] bg-white p-1.5 text-[#64748B] transition-colors hover:border-red-200 hover:text-[#E53935]"
                                                         aria-label={`Remove ${item.name}`}
                                                     >
-                                                        <Trash2 size={18} />
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
 
-                                                <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                                    <div className="flex items-end gap-2">
-                                                        <div className="text-2xl font-black tracking-tight text-slate-900">
-                                                            ₹{item.price * item.quantity}
-                                                        </div>
-                                                        <div className="pb-0.5 text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-                                                            total
-                                                        </div>
+                                                <div className="mt-3 flex items-center justify-between">
+                                                    <div className="text-base font-bold text-[#172033]">
+                                                        ₹{item.price * item.quantity}
                                                     </div>
 
-                                                    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1 shadow-sm">
+                                                    <div className="inline-flex items-center gap-2 rounded-xl border border-[#123B8E] bg-[#EFF6FF] px-2 py-0.5 shadow-2xs">
                                                         <button
                                                             onClick={() => updateQuantity(item.id, -1, item.variantSku)}
-                                                            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-all hover:bg-white hover:text-slate-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-30"
+                                                            className="flex h-7 w-7 items-center justify-center rounded-lg text-[#123B8E] hover:opacity-75 transition-all disabled:cursor-not-allowed disabled:opacity-30"
                                                             disabled={item.quantity <= 1}
                                                         >
-                                                            <Minus size={15} strokeWidth={3} />
+                                                            <Minus size={14} strokeWidth={3} />
                                                         </button>
-                                                        <span className="min-w-[24px] text-center text-sm font-black text-slate-900">
+                                                        <span className="min-w-[20px] text-center text-sm font-extrabold text-[#123B8E]">
                                                             {item.quantity}
                                                         </span>
                                                         <button
                                                             onClick={() => updateQuantity(item.id, 1, item.variantSku)}
-                                                            className="flex h-9 w-9 items-center justify-center rounded-full text-slate-600 transition-all hover:bg-white hover:text-slate-900 hover:shadow-md"
+                                                            className="flex h-7 w-7 items-center justify-center rounded-lg text-[#123B8E] hover:opacity-75 transition-all"
                                                         >
-                                                            <Plus size={15} strokeWidth={3} />
+                                                            <Plus size={14} strokeWidth={3} />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -130,123 +119,94 @@ const CartPage = () => {
                                 ))}
                             </div>
 
-                            <div className="flex flex-col gap-3 rounded-[1.5rem] border border-white/80 bg-white/80 p-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)] sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-2xs">
                                 <Link
                                     to="/categories"
-                                    className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2.5 text-sm font-black text-brand-700 transition-colors hover:bg-brand-100"
+                                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#123B8E] hover:underline"
                                 >
                                     Continue Shopping
-                                    <ArrowRight size={16} />
+                                    <ArrowRight size={14} />
                                 </Link>
                                 <button
                                     onClick={clearCart}
-                                    className="text-sm font-bold text-slate-400 transition-colors hover:text-rose-500"
+                                    className="text-xs font-bold text-[#64748B] hover:text-[#E53935] transition-colors"
                                 >
                                     Clear Cart
                                 </button>
                             </div>
                         </section>
 
-                        <aside className="lg:sticky lg:top-28 h-fit">
-                            <div className="overflow-hidden rounded-[2rem] border border-slate-100 bg-slate-900 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
-                                <div className="bg-[radial-gradient(circle_at_top_right,_rgba(34,197,94,0.35),_transparent_38%),linear-gradient(180deg,_rgba(255,255,255,0.08),_transparent)] px-6 py-6">
-                                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-brand-300">
-                                        <ShieldCheck size={13} />
-                                        Secure summary
+                        <aside className="lg:sticky lg:top-24 h-fit">
+                            <div className="overflow-hidden rounded-2xl border border-[#E2E8F0] bg-white p-5 shadow-sm space-y-4">
+                                <div className="border-b border-[#E2E8F0] pb-3">
+                                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#123B8E] uppercase tracking-wider mb-1">
+                                        <ShieldCheck size={14} />
+                                        Secure Summary
                                     </div>
-                                    <h2 className="mt-3 text-2xl font-black tracking-tight">
+                                    <h2 className="text-lg font-bold text-[#172033]">
                                         Order Summary
                                     </h2>
-                                    <p className="mt-2 text-sm leading-relaxed text-white/70">
-                                        One last look before we send it to checkout.
-                                    </p>
                                 </div>
 
-                                <div className="space-y-4 px-6 pb-6">
-                                    <div className="space-y-3 rounded-[1.5rem] bg-white/5 p-4 backdrop-blur-sm">
-                                        <div className="flex justify-between text-sm text-white/75">
-                                            <span>Subtotal</span>
-                                            <span className="font-bold text-white">₹{cartTotal}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm text-white/75">
-                                            <span>Delivery Fee</span>
-                                            <span className="font-bold text-brand-300">FREE</span>
-                                        </div>
-                                        <div className="border-t border-white/10 pt-4 flex items-center justify-between">
-                                            <span className="text-base font-bold text-white/85">Total Amount</span>
-                                            <span className="text-3xl font-black tracking-tight text-brand-300">₹{cartTotal}</span>
-                                        </div>
+                                <div className="space-y-3 text-sm">
+                                    <div className="flex justify-between text-[#64748B]">
+                                        <span>Subtotal</span>
+                                        <span className="font-bold text-[#172033]">₹{cartTotal}</span>
                                     </div>
+                                    <div className="flex justify-between text-[#64748B]">
+                                        <span>Delivery Fee</span>
+                                        <span className="font-bold text-[#16A34A]">FREE</span>
+                                    </div>
+                                    <div className="border-t border-[#E2E8F0] pt-3 flex items-center justify-between">
+                                        <span className="font-bold text-[#172033]">Total Amount</span>
+                                        <span className="text-2xl font-black text-[#123B8E]">₹{cartTotal}</span>
+                                    </div>
+                                </div>
 
-                                    <Link to="/checkout" className="block">
-                                        <Button className="h-14 w-full rounded-full bg-brand-400 text-slate-950 hover:bg-brand-300 text-base font-black flex items-center justify-center gap-2 shadow-[0_18px_35px_rgba(16,185,129,0.3)] transition-all">
-                                            Place Order <ArrowRight size={18} />
-                                        </Button>
-                                    </Link>
+                                <Link to="/checkout" className="block pt-2">
+                                    <Button className="h-12 w-full rounded-xl bg-[#123B8E] text-white hover:bg-[#1976D2] text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95">
+                                        Proceed to Checkout <ArrowRight size={16} />
+                                    </Button>
+                                </Link>
 
-                                    <div className="grid grid-cols-2 gap-3 text-xs font-bold uppercase tracking-[0.16em] text-white/55">
-                                        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                                            <Truck size={15} className="mb-2 text-brand-300" />
-                                            Fast delivery
-                                        </div>
-                                        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
-                                            <ShieldCheck size={15} className="mb-2 text-brand-300" />
-                                            Secure payment
-                                        </div>
+                                <div className="grid grid-cols-2 gap-2 text-[10px] font-bold uppercase tracking-wider text-[#64748B] pt-2 border-t border-[#E2E8F0]">
+                                    <div className="rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] p-2.5 flex items-center gap-2">
+                                        <Truck size={16} className="text-[#16A34A]" />
+                                        <span>Fast delivery</span>
+                                    </div>
+                                    <div className="rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] p-2.5 flex items-center gap-2">
+                                        <ShieldCheck size={16} className="text-[#123B8E]" />
+                                        <span>Secure payment</span>
                                     </div>
                                 </div>
                             </div>
                         </aside>
                     </div>
                 ) : (
-                    <div className="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-white/80 bg-white/90 backdrop-blur-xl shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-                        <div className="relative px-6 py-12 md:px-12 md:py-16">
-                            <div className="pointer-events-none absolute inset-0">
-                                <div className="absolute -right-8 top-0 h-32 w-32 rounded-full bg-brand-200/40 blur-3xl" />
-                                <div className="absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-lime-200/50 blur-3xl" />
-                            </div>
+                    <div className="mx-auto max-w-lg rounded-3xl border border-[#E2E8F0] bg-white p-8 shadow-sm text-center my-8">
+                        <div className="mx-auto mb-6 flex h-36 w-36 items-center justify-center rounded-2xl bg-[#EFF6FF] text-[#123B8E] shadow-2xs">
+                            {emptyBoxData ? (
+                                <Lottie animationData={emptyBoxData} loop className="h-32 w-32" />
+                            ) : (
+                                <Sparkles size={48} />
+                            )}
+                        </div>
 
-                            <div className="relative text-center">
-                                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-brand-700">
-                                    <Sparkles size={12} />
-                                    Empty cart
-                                </div>
+                        <h2 className="text-2xl font-bold tracking-tight text-[#172033] mb-2">
+                            Your cart is empty
+                        </h2>
+                        <p className="text-sm leading-relaxed text-[#64748B] mb-6 max-w-sm mx-auto">
+                            Let's fill it with fresh essentials, daily favorites, and everything you need today.
+                        </p>
 
-                                <div className="mx-auto mb-8 flex h-48 w-48 items-center justify-center rounded-[2rem] border border-brand-100 bg-gradient-to-br from-brand-50 to-white shadow-[0_16px_40px_rgba(16,185,129,0.12)] md:h-56 md:w-56">
-                                    {emptyBoxData ? (
-                                        <Lottie
-                                            animationData={emptyBoxData}
-                                            loop
-                                            className="h-40 w-40 md:h-48 md:w-48"
-                                        />
-                                    ) : (
-                                        <div className="h-40 w-40 md:h-48 md:w-48" />
-                                    )}
-                                </div>
-
-                                <h2 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-[0.96]">
-                                    Your cart is empty
-                                </h2>
-                                <p className="mx-auto mt-4 max-w-xl text-base md:text-lg leading-relaxed text-slate-600">
-                                    Let&apos;s fill it with fresh essentials, daily favorites, and the little things you need right now.
-                                </p>
-
-                                <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:justify-center">
-                                    <Link
-                                        to="/categories"
-                                        className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-8 py-3.5 text-sm font-black text-white transition-transform hover:-translate-y-0.5"
-                                    >
-                                        Start Shopping
-                                        <ArrowRight size={16} />
-                                    </Link>
-                                    <Link
-                                        to="/offers"
-                                        className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-8 py-3.5 text-sm font-black text-slate-800 transition-colors hover:bg-slate-50"
-                                    >
-                                        Browse Offers
-                                    </Link>
-                                </div>
-                            </div>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <Link
+                                to="/"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#123B8E] hover:bg-[#1976D2] px-7 py-3 text-sm font-bold text-white shadow-sm transition-all active:scale-95"
+                            >
+                                Start Shopping
+                                <ArrowRight size={16} />
+                            </Link>
                         </div>
                     </div>
                 )}

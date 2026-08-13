@@ -1,37 +1,54 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// Replace these with actual config from Firebase console
+const apiKey = import.meta.env.VITE_FIREBASE_API_KEY;
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+
+// Check if valid production Firebase config exists
+const isFirebaseConfigured = Boolean(
+  apiKey &&
+  projectId &&
+  !apiKey.includes("YOUR_") &&
+  apiKey !== "AIzaSyCzIpvdpnLk6Dske8dBwt9tzahZMspZoHc"
+);
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: isFirebaseConfigured ? apiKey : undefined,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  projectId: isFirebaseConfigured ? projectId : undefined,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+let app = getApps()[0];
+if (!app && isFirebaseConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+  } catch (err) {
+    console.warn("[firebase] App initialization skipped:", err?.message || err);
+  }
+}
+
+let auth = null;
+if (app && isFirebaseConfigured) {
+  try {
+    auth = getAuth(app);
+  } catch (err) {
+    console.warn("[firebase] Auth initialization skipped:", err?.message || err);
+  }
+}
 
 // Initialize Analytics if supported
 let analytics = null;
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined" && app && isFirebaseConfigured) {
   isSupported().then((supported) => {
     if (supported) {
       analytics = getAnalytics(app);
     }
-  });
+  }).catch(() => {});
 }
 
-// NOTE: Do NOT enable `appVerificationDisabledForTesting` in builds that ship to
-// real users. When true, the SDK renders a MOCK reCAPTCHA and sends a fake token;
-// Firebase's production backend rejects that token as MALFORMED
-// (auth/captcha-check-failed) and the SMS is never sent. It may only be used
-// locally together with Firebase "test phone numbers".
-
-export { auth, RecaptchaVerifier, signInWithPhoneNumber, analytics };
+export { auth, RecaptchaVerifier, signInWithPhoneNumber, analytics, isFirebaseConfigured };

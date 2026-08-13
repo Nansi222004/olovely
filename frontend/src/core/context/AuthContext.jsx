@@ -190,24 +190,29 @@ export const AuthProvider = ({ children }) => {
     }, [token, currentRole]);
 
     const login = (userData) => {
-        const role = userData.role?.toLowerCase() || 'customer';
+        if (!userData) return;
+        const role = userData.role?.toLowerCase() || currentRole || 'customer';
         const storageKey = ROLE_STORAGE_KEYS[role];
+        const activeToken = userData.token || authData[role] || getSafeToken(role);
 
-        if (storageKey && userData.token) {
-            if (userData.refreshToken) {
-                const storedData = {
-                    accessToken: userData.token,
-                    refreshToken: userData.refreshToken
-                };
-                localStorage.setItem(storageKey, JSON.stringify(storedData));
-            } else {
-                localStorage.setItem(storageKey, userData.token);
+        if (storageKey) {
+            if (userData.token) {
+                if (userData.refreshToken) {
+                    const storedData = {
+                        accessToken: userData.token,
+                        refreshToken: userData.refreshToken
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(storedData));
+                } else {
+                    localStorage.setItem(storageKey, userData.token);
+                }
+
+                setAuthData(prev => ({ ...prev, [role]: userData.token }));
             }
 
-            setAuthData(prev => ({ ...prev, [role]: userData.token }));
-            setUser(userData); // Set full data initially
+            setUser(prev => ({ ...(prev || {}), ...userData }));
         } else {
-            console.error('Invalid role or missing token for login:', role);
+            console.error('Invalid role for login:', role);
         }
     };
 

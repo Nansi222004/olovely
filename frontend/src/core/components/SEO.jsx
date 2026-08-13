@@ -14,7 +14,7 @@ const SEO = ({ title, description, keywords, image, url }) => {
     const { settings } = useSettings();
 
     // Fallbacks to global settings
-    const siteName = settings?.appName || 'Appzeto';
+    const siteName = settings?.appName || 'Olovely';
     const seoTitle = title ? `${title} | ${siteName}` : (settings?.metaTitle || siteName);
     const seoDescription = description || settings?.metaDescription || '';
     

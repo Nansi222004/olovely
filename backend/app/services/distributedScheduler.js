@@ -46,7 +46,7 @@ async function acquireLock(jobName, lockDuration) {
       return { acquired: true, lockKey, lockValue };
     } else {
       // Lock already held by another instance
-      const currentLock = await redisManager.get(lockKey);
+      const currentLock = await redisManager.getRaw(lockKey);
       logger.debug('Lock acquisition failed - held by another instance', {
         jobName,
         instanceId,
@@ -78,7 +78,7 @@ async function releaseLock(lockKey, lockValue) {
   
   try {
     // Only delete if the lock value matches (we own the lock)
-    const currentValue = await redisManager.get(lockKey);
+    const currentValue = await redisManager.getRaw(lockKey);
     if (currentValue === lockValue) {
       await redisManager.del(lockKey);
       logger.debug('Lock released successfully', {

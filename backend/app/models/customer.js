@@ -30,6 +30,16 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
+        avatar: {
+            type: String,
+            default: "",
+        },
+
+        bio: {
+            type: String,
+            default: "",
+        },
+
         email: {
             type: String,
             lowercase: true,

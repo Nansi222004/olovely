@@ -35,7 +35,7 @@ const CustomerSupportWidget = ({ activeOrder = null }) => {
             } else if (context === CHAT_CONTEXTS.DRIVER) {
                 initialMsg = `Hello! I'm on my way with your order. You can track my location or message me here if you need to provide specific delivery instructions.`;
             } else {
-                initialMsg = `Welcome to Zoogno Support! How can we help you today?`;
+                initialMsg = `Welcome to Olovely Support! How can we help you today?`;
             }
 
             setMessages([{ id: Date.now(), text: initialMsg, sender: 'support', time: new Date() }]);

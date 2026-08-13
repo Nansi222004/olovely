@@ -11,8 +11,8 @@ export const shareProduct = async (req, res) => {
 
     const title = product.name || "Check out this product";
     const price = product.salePrice || product.price || "";
-    const storeName = product.sellerId?.shopName || "Zoogno";
-    const description = `Buy ${title} from ${storeName} for ₹${price} at Zoogno.`;
+    const storeName = product.sellerId?.shopName || "Olovely";
+    const description = `Buy ${title} from ${storeName} for ₹${price} at Olovely.`;
     let image = product.mainImage || (product.galleryImages && product.galleryImages.length > 0 ? product.galleryImages[0] : "https://zoogno.com/default-share-image.jpg");
     
     // Convert Cloudinary images (.webp, .png, etc) to .jpg for maximum WhatsApp/Facebook compatibility

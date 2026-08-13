@@ -228,17 +228,19 @@ export const getCustomerProfile = async (req, res) => {
 ================================ */
 export const updateCustomerProfile = async (req, res) => {
     try {
-        const { name, email, addresses, phone } = req.body;
+        const { name, email, addresses, phone, bio, avatar, avatarUrl } = req.body;
 
         const customer = await Customer.findById(req.user.id);
         if (!customer) {
             return handleResponse(res, 404, "Customer not found");
         }
 
-        if (name) customer.name = name;
-        if (email) customer.email = email;
-        if (phone) customer.phone = phone;
-        if (addresses) customer.addresses = addresses;
+        if (name !== undefined) customer.name = name;
+        if (email !== undefined) customer.email = email;
+        if (phone !== undefined) customer.phone = phone;
+        if (bio !== undefined) customer.bio = bio;
+        if (avatar || avatarUrl) customer.avatar = avatar || avatarUrl;
+        if (addresses !== undefined) customer.addresses = addresses;
 
         await customer.save();
 

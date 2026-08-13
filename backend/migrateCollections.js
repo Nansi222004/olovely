@@ -1,8 +1,9 @@
+import 'dotenv/config';
 import { MongoClient } from 'mongodb';
 import bcrypt from 'bcrypt';
 
 async function migrateCollections() {
-    const targetUri = "mongodb+srv://zoogno:zoogno123@cluster0.bj0klhd.mongodb.net/zoogno";
+    const targetUri = process.env.MONGO_URI || "mongodb://localhost:27017/quickcommerce";
     const client = new MongoClient(targetUri);
 
     try {

@@ -28,41 +28,41 @@ const CATEGORIES = [
     {
         title: "Grocery",
         icon: <ShoppingBasket size={28} />,
-        color: "#ecfeff",
-        ring: "var(--primary)",
-        text: "var(--brand-500)",
-        theme: "var(--primary)",
-        shadow: "rgba(97, 218, 251, 0.3)",
+        color: "#eff6ff",
+        ring: "#123B8E",
+        text: "#123B8E",
+        theme: "#123B8E",
+        shadow: "rgba(18, 59, 142, 0.25)",
         img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600"
     },
     {
-        title: "Store",
-        icon: <Smartphone size={28} />,
-        color: "#f0f9ff",
-        ring: "var(--brand-400)",
-        text: "#0369a1",
-        theme: "var(--brand-500)",
-        shadow: "rgba(14, 165, 233, 0.3)",
-        img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600"
-    },
-    {
-        title: "Food",
+        title: "Fresh",
         icon: <Utensils size={28} />,
-        color: "#f0fdfa",
-        ring: "#22d3ee",
-        text: "#0e7490",
-        theme: "var(--brand-500)",
-        shadow: "rgba(14, 165, 233, 0.3)",
+        color: "#f0fdf4",
+        ring: "#16A34A",
+        text: "#16A34A",
+        theme: "#16A34A",
+        shadow: "rgba(22, 163, 74, 0.25)",
         img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=600"
     },
     {
-        title: "Health",
+        title: "Snacks",
+        icon: <Smartphone size={28} />,
+        color: "#fefce8",
+        ring: "#F4B400",
+        text: "#172033",
+        theme: "#F4B400",
+        shadow: "rgba(244, 180, 0, 0.25)",
+        img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600"
+    },
+    {
+        title: "Health & Care",
         icon: <ShieldCheck size={28} />,
-        color: "#eff6ff",
-        ring: "#60a5fa",
-        text: "#1d4ed8",
-        theme: "#3b82f6",
-        shadow: "rgba(59, 130, 246, 0.3)",
+        color: "#fef2f2",
+        ring: "#E53935",
+        text: "#E53935",
+        theme: "#E53935",
+        shadow: "rgba(229, 57, 53, 0.25)",
         img: "https://images.unsplash.com/photo-1512678080530-7760d81faba6?q=80&w=1200&auto=format&fit=crop"
     },
 ];
@@ -324,7 +324,7 @@ const CustomerAuth = () => {
                                             src={logoUrl}
                                             alt={`${appName} logo`}
                                             loading="lazy"
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-contain p-2 bg-white"
                                         />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: activeCategory.color }}>
@@ -470,7 +470,7 @@ const CustomerAuth = () => {
 
                                     <form onSubmit={handleVerifyOtp} className="space-y-10">
                                         <div className="flex justify-center gap-2 sm:gap-3 w-full">
-                                            {[...Array(otpProvider === 'firebase' ? 6 : 4)].map((_, i) => (
+                                            {[...Array(6)].map((_, i) => (
                                                 <input
                                                     key={i}
                                                     type="tel"
@@ -484,7 +484,7 @@ const CustomerAuth = () => {
                                                     }}
                                                     onChange={(e) => {
                                                         const val = e.target.value;
-                                                        if (val && i < (otpProvider === 'firebase' ? 5 : 3)) (e.target.nextElementSibling).focus();
+                                                        if (val && i < 5) (e.target.nextElementSibling).focus();
                                                         const otpArr = formData.otp.split('');
                                                         otpArr[i] = val;
                                                         setFormData({ ...formData, otp: otpArr.join('') });

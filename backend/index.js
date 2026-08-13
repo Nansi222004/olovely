@@ -174,8 +174,8 @@ function createApp() {
     }),
   );
 
-  app.use(express.json({ limit: process.env.API_JSON_LIMIT || "1mb" }));
-  app.use(express.urlencoded({ limit: process.env.API_URLENCODED_LIMIT || "1mb", extended: true }));
+  app.use(express.json({ limit: process.env.API_JSON_LIMIT || "10mb" }));
+  app.use(express.urlencoded({ limit: process.env.API_URLENCODED_LIMIT || "10mb", extended: true }));
 
   // Static images route for VPS storage fallback when running locally without Nginx
   app.use("/images", express.static(process.env.STORAGE_BASE_PATH || path.join(process.cwd(), 'storage')));

@@ -20,12 +20,12 @@ const sendAdminInviteEmail = async (email, password) => {
     try {
         const transporter = createTransporter();
         const mailOptions = {
-            from: `"${process.env.MAIL_FROM_NAME || 'Zoognu Admin'}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+            from: `"${process.env.MAIL_FROM_NAME || 'Olovely Admin'}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
             to: email,
-            subject: "Welcome to Zoognu Admin",
+            subject: "Welcome to Olovely Admin",
             html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px;">
-                    <h2 style="color: #4f46e5;">Welcome to Zoognu Admin Panel!</h2>
+                    <h2 style="color: #4f46e5;">Welcome to Olovely Admin Panel!</h2>
                     <p>You have been invited to join the admin team.</p>
                     <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0;">
                         <p style="margin: 0 0 10px 0;"><strong>Your login credentials:</strong></p>
@@ -73,12 +73,12 @@ export const sendInviteOtp = async (req, res) => {
         try {
             const transporter = createTransporter();
             const mailOptions = {
-                from: `"${process.env.MAIL_FROM_NAME || 'Zoognu Admin'}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
+                from: `"${process.env.MAIL_FROM_NAME || 'Olovely Admin'}" <${process.env.MAIL_FROM || process.env.SMTP_USER}>`,
                 to: email,
-                subject: "Your Zoognu Admin Verification OTP",
+                subject: "Your Olovely Admin Verification OTP",
                 html: `
                     <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; text-align: center; border: 1px solid #eee; border-radius: 10px;">
-                        <h2 style="color: #4f46e5;">Zoognu Admin Verification</h2>
+                        <h2 style="color: #4f46e5;">Olovely Admin Verification</h2>
                         <p>Your OTP to verify your email for the admin panel invitation is:</p>
                         <div style="margin: 30px 0; padding: 20px; background-color: #f3f4f6; border-radius: 8px;">
                             <h1 style="color: #111827; letter-spacing: 8px; margin: 0; font-size: 36px;">${otp}</h1>

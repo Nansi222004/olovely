@@ -135,7 +135,7 @@ const QRBagGenerate = () => {
             pdf.text(bag.bagId, x + (qrSize / 2), y + qrSize + 5, { align: 'center' });
         });
 
-        pdf.save(`zoognu-bags-${generatedBags.length}-${Date.now()}.pdf`);
+        pdf.save(`olovely-bags-${generatedBags.length}-${Date.now()}.pdf`);
     };
 
     return (

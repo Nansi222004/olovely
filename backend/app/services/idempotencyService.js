@@ -68,6 +68,10 @@ export async function checkIdempotency(key, payload = null) {
     throw new Error("Invalid idempotency key format");
   }
   
+  const resultKey = RESULT_KEY_PREFIX + key;
+  const lockKey = LOCK_KEY_PREFIX + key;
+  const errorKey = ERROR_KEY_PREFIX + key;
+
   const pipeline = redisManager.getPipeline();
   if (!pipeline) {
     return { exists: false, inProgress: false, checksumMismatch: false };

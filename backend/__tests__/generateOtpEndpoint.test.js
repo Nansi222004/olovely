@@ -9,8 +9,11 @@ const mockGetIO = jest.fn();
 const mockHandleResponse = jest.fn();
 const mockEmitToCustomer = jest.fn();
 
+const mockResolveCanonicalOrderId = jest.fn();
+
 jest.unstable_mockModule('../app/utils/orderLookup.js', () => ({
-  orderMatchQueryFromRouteParam: mockOrderMatchQueryFromRouteParam
+  orderMatchQueryFromRouteParam: mockOrderMatchQueryFromRouteParam,
+  resolveCanonicalOrderId: mockResolveCanonicalOrderId,
 }));
 
 jest.unstable_mockModule('../app/models/order.js', () => ({
@@ -37,8 +40,15 @@ jest.unstable_mockModule('../app/socket/socketManager.js', () => ({
 
 jest.unstable_mockModule('../app/services/orderSocketEmitter.js', () => ({
   emitToCustomer: mockEmitToCustomer,
+  emitToSeller: jest.fn(),
+  emitToDelivery: jest.fn(),
+  emitOrderStatusUpdate: jest.fn(),
   emitOrderLocationUpdate: jest.fn(),
   emitReturnEvent: jest.fn(),
+  emitDeliveryBroadcastForSeller: jest.fn(),
+  retractDeliveryBroadcastForOrder: jest.fn(),
+  emitDeliveryBroadcast: jest.fn(),
+  emitReturnBroadcastForCustomer: jest.fn(),
 }));
 
 jest.unstable_mockModule('../app/utils/helper.js', () => ({

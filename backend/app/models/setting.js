@@ -9,11 +9,11 @@ const settingSchema = new mongoose.Schema(
         // General
         appName: {
             type: String,
-            default: "Appzeto Quick Commerce",
+            default: "Olovely",
         },
         supportEmail: {
             type: String,
-            default: "support@appzeto.com",
+            default: "support@olovely.com",
         },
         supportPhone: {
             type: String,
@@ -33,16 +33,22 @@ const settingSchema = new mongoose.Schema(
         },
 
         // Branding
-        logoUrl: String,
-        faviconUrl: String,
+        logoUrl: {
+            type: String,
+            default: "/olovelylogo.jpeg",
+        },
+        faviconUrl: {
+            type: String,
+            default: "/olovelylogo.jpeg",
+        },
         signatureUrl: String,
         primaryColor: {
             type: String,
-            default: "#0ea5e9",
+            default: "#123B8E",
         },
         secondaryColor: {
             type: String,
-            default: "#64748b",
+            default: "#1976D2",
         },
 
         // Legal

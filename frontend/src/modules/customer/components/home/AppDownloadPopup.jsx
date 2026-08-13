@@ -68,7 +68,7 @@ const AppDownloadPopup = () => {
               {/* Text & Button */}
               <div className="text-left">
                 <h2 className="text-sm font-black text-slate-900 mb-1 uppercase tracking-wide">
-                  Get the Zoogno App!
+                  Get the Olovely App!
                 </h2>
                 <p className="text-slate-500 font-medium text-xs mb-3 leading-relaxed">
                   For the best experience & offers, download our mobile app.

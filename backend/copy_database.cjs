@@ -1,7 +1,8 @@
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
-const SOURCE_URI = 'mongodb+srv://playeronline4076_db_user:3e6Kc6Ikodz6vXGs@cluster0.yau7gwg.mongodb.net/Quick_commerce?retryWrites=true&w=majority&appName=Cluster0';
-const DEST_URI = 'mongodb+srv://zoogno:zoognuapp123@cluster0.bj0klhd.mongodb.net/Quick_commerce?retryWrites=true&w=majority';
+const SOURCE_URI = process.env.SOURCE_MONGO_URI || process.env.MONGO_URI;
+const DEST_URI = process.env.DEST_MONGO_URI || process.env.MONGO_URI;
 
 async function copyDatabase() {
   let sourceClient, destClient;

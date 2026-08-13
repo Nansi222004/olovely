@@ -84,7 +84,7 @@ export const generateInvoicePdf = async (order, settings = {}, returnDocOnly = f
     const img = await new Promise((resolve, reject) => {
       const i = new Image();
       i.crossOrigin = 'Anonymous';
-      i.src = '/zoognologo.jpeg';
+      i.src = '/olovelylogo.jpeg';
       i.onload = () => resolve(i);
       i.onerror = reject;
     });
@@ -96,10 +96,7 @@ export const generateInvoicePdf = async (order, settings = {}, returnDocOnly = f
     doc.setFontSize(24);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(50, 168, 82); // Greenish logo color
-    doc.text("Zoog", 15, 25);
-    const zoogWidth = doc.getTextWidth("Zoog");
-    doc.setTextColor(19, 93, 31); // #135d1f
-    doc.text("no", 15 + zoogWidth, 25);
+    doc.text("Olovely", 15, 25);
   }
   
   doc.setFontSize(18);
@@ -125,7 +122,7 @@ export const generateInvoicePdf = async (order, settings = {}, returnDocOnly = f
   doc.text("Sold By / Seller", marginX + 2, currentY + 5);
   
   const seller = order?.seller || {};
-  const sName = seller?.shopName || seller?.name || "Zoogno Seller";
+  const sName = seller?.shopName || seller?.name || "Olovely Seller";
   const sAddressDetails = [seller?.address, seller?.locality, seller?.city, seller?.state, seller?.pincode].filter(Boolean).join(", ");
   const sAddress = sAddressDetails || "Address not provided";
   const sGstin = seller?.gstin || "Not Provided";
@@ -524,7 +521,7 @@ export const generateInvoicePdf = async (order, settings = {}, returnDocOnly = f
   
   doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.text(settings?.companyName || "Zoogno Private Limited", marginX + 2, currentY + 5);
+  doc.text(settings?.companyName || "Olovely Total Suvidha", marginX + 2, currentY + 5);
   
   doc.setFontSize(8);
   doc.text("GSTIN", marginX + 2, currentY + 12);
@@ -583,7 +580,7 @@ export const generateInvoicePdf = async (order, settings = {}, returnDocOnly = f
   
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6);
-  const tnc1 = "1. If you have any issues or queries in respect of your order, please contact customer chat support through Zoogno platform.";
+  const tnc1 = "1. If you have any issues or queries in respect of your order, please contact customer chat support through Olovely platform.";
   const tnc2 = "2. In case you need to get more information about seller's FSSAI status, please visit https://foscos.fssai.gov.in/ and use the FBO search option.";
   const tnc3 = "3. Please note that we never ask for bank account details such as CVV, account number, UPI Pin, etc. across our support channels. For your safety please do not share these details.";
   

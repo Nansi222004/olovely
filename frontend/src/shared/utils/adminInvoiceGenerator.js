@@ -84,7 +84,7 @@ export const generateAdminInvoicePdf = async (order, settings = {}, returnDocOnl
     const img = await new Promise((resolve, reject) => {
       const i = new Image();
       i.crossOrigin = 'Anonymous';
-      i.src = settings?.logoUrl || '/zoognologo.jpeg';
+      i.src = settings?.logoUrl || '/olovelylogo.jpeg';
       i.onload = () => resolve(i);
       i.onerror = reject;
     });
@@ -95,10 +95,10 @@ export const generateAdminInvoicePdf = async (order, settings = {}, returnDocOnl
     doc.setFontSize(24);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(50, 168, 82);
-    doc.text(settings?.appName?.substring(0, 4) || "Zoog", 15, 25);
-    const zWidth = doc.getTextWidth(settings?.appName?.substring(0, 4) || "Zoog");
+    doc.text(settings?.appName?.substring(0, 7) || "Olovely", 15, 25);
+    const zWidth = doc.getTextWidth(settings?.appName?.substring(0, 7) || "Olovely");
     doc.setTextColor(19, 93, 31);
-    doc.text(settings?.appName?.substring(4) || "no", 15 + zWidth, 25);
+    doc.text(settings?.appName?.substring(7) || "", 15 + zWidth, 25);
   }
 
   doc.setFontSize(18);
@@ -123,7 +123,7 @@ export const generateAdminInvoicePdf = async (order, settings = {}, returnDocOnl
   doc.setFont("helvetica", "bold");
   doc.text("Sold By", marginX + 2, currentY + 5);
 
-  const cName = settings?.companyName || settings?.appName || "Zoogno Private Limited";
+  const cName = settings?.companyName || settings?.appName || "Olovely Total Suvidha";
   const cAddress = settings?.address || "Headquarters Address";
   const cGstin = settings?.gstin || settings?.taxId || "Not Provided";
   const cFssai = settings?.fssaiLicense || "Not Provided";
@@ -427,7 +427,7 @@ export const generateAdminInvoicePdf = async (order, settings = {}, returnDocOnl
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(6);
-  const tnc1 = `1. If you have any issues or queries in respect of your order, please contact customer chat support through the ${settings?.appName || 'Zoogno'} platform.`;
+  const tnc1 = `1. If you have any issues or queries in respect of your order, please contact customer chat support through the ${settings?.appName || 'Olovely'} platform.`;
   const tnc2 = "2. In case you need to get more information about seller's FSSAI status, please visit https://foscos.fssai.gov.in/ and use the FBO search option.";
   const tnc3 = "3. Please note that we never ask for bank account details such as CVV, account number, UPI Pin, etc. across our support channels. For your safety please do not share these details with anyone over any medium.";
 

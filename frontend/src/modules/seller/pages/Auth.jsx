@@ -633,7 +633,7 @@ const Auth = () => {
     }, [isMapOpen]);
 
     return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[#fcfaff] p-6 font-['Outfit'] overflow-hidden">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#F8FAFC] p-6 font-['Outfit'] overflow-hidden">
       {/* Elegant Ambient Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-slate-100/50 rounded-full blur-[120px]" />

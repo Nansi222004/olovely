@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Phone, Mail, Camera, Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,13 +9,15 @@ import { customerApi } from '../services/customerApi';
 const EditProfilePage = () => {
     const navigate = useNavigate();
     const { user, login } = useAuth();
+    const fileInputRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
     const [formData, setFormData] = useState({
         name: user?.name || '',
         phone: user?.phone || '',
         email: user?.email || '',
-        bio: user?.bio || ''
+        bio: user?.bio || '',
+        avatar: user?.avatar || ''
     });
 
     useEffect(() => {
@@ -29,7 +31,8 @@ const EditProfilePage = () => {
                         name: liveData.name || '',
                         phone: liveData.phone || '',
                         email: liveData.email || '',
-                        bio: liveData.bio || ''
+                        bio: liveData.bio || '',
+                        avatar: liveData.avatar || user?.avatar || ''
                     });
                     // Also update local auth state to keep everything in sync
                     login({ ...user, ...liveData });
@@ -48,12 +51,71 @@ const EditProfilePage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handlePhotoClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const compressImage = (file, maxWidth = 400, quality = 0.8) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxWidth) {
+                            width = Math.round((width * maxWidth) / height);
+                            height = maxWidth;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL("image/jpeg", quality));
+                };
+                img.onerror = () => resolve(event.target.result);
+            };
+        });
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error("Image size must be less than 10MB");
+            return;
+        }
+
+        try {
+            const compressedBase64 = await compressImage(file, 400, 0.8);
+            setFormData((prev) => ({ ...prev, avatar: compressedBase64 }));
+            toast.success("Photo selected & optimized! Click 'Save Changes' to update.");
+        } catch (err) {
+            toast.error("Failed to process image");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
             const response = await customerApi.updateProfile(formData);
-            const updatedUser = response.data.result;
+            const updatedUser = response.data.result || response.data.data || response.data;
 
             // Update local auth state
             login({ ...user, ...updatedUser });
@@ -69,6 +131,15 @@ const EditProfilePage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans pb-10">
+            {/* Hidden File Input for Profile Photo */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                className="hidden"
+            />
+
             {/* Header */}
             <div className="bg-white sticky top-0 z-30 px-4 py-3 flex items-center gap-3 shadow-sm">
                 <Link to="/profile" className="p-2 -ml-2 rounded-full hover:bg-slate-100 transition-colors">
@@ -81,15 +152,34 @@ const EditProfilePage = () => {
 
                 {/* Profile Picture Upload */}
                 <div className="flex flex-col items-center mb-8">
-                    <div className="relative">
-                        <div className="h-28 w-28 rounded-full bg-slate-200 border-4 border-white shadow-md flex items-center justify-center overflow-hidden">
-                            <User size={48} className="text-slate-400" />
+                    <div className="relative cursor-pointer group" onClick={handlePhotoClick}>
+                        <div className="h-28 w-28 rounded-full bg-slate-200 border-4 border-white shadow-md flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+                            {formData.avatar ? (
+                                <img
+                                    src={formData.avatar}
+                                    alt="Profile Avatar"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <User size={48} className="text-slate-400" />
+                            )}
                         </div>
-                        <button className="absolute bottom-0 right-0 p-2 bg-primary text-primary-foreground rounded-full border-2 border-white shadow-sm hover:bg-[#0a701a] transition-colors">
+                        <button
+                            type="button"
+                            onClick={handlePhotoClick}
+                            className="absolute bottom-0 right-0 p-2 bg-[#123B8E] text-white rounded-full border-2 border-white shadow-sm hover:bg-[#1976D2] active:scale-95 transition-all"
+                            aria-label="Upload Photo"
+                        >
                             <Camera size={18} />
                         </button>
                     </div>
-                    <p className="mt-3 text-sm font-bold text-primary">Change Photo</p>
+                    <button
+                        type="button"
+                        onClick={handlePhotoClick}
+                        className="mt-3 text-sm font-bold text-[#123B8E] hover:underline cursor-pointer"
+                    >
+                        Change Photo
+                    </button>
                 </div>
 
                 {/* Edit Form */}

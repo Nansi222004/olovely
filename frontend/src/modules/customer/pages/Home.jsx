@@ -26,6 +26,7 @@ import CardBanner from "@/assets/CardBanner.jpg";
 import SectionRenderer from "../components/experience/SectionRenderer";
 import ExperienceBannerCarousel from "../components/experience/ExperienceBannerCarousel";
 import DynamicEventBanner from "../components/shared/DynamicEventBanner";
+import { deriveCategoryTheme } from "../utils/headerTheme";
 import { useLocation } from "../context/LocationContext";
 import { useSettings } from "@core/context/SettingsContext";
 const Lottie = React.lazy(() => import("lottie-react"));
@@ -505,8 +506,12 @@ const Home = () => {
     return null; // Particles were already simplified out earlier
   };
 
+  const categoryTheme = deriveCategoryTheme(activeCategory?.headerColor, activeCategory?.headerFontColor);
+
   return (
-    <div className={`min-h-screen pt-[190px] md:pt-[250px] ${products.length === 0 && !isLoading ? "bg-white" : "bg-[#F5F7F8]"}`}>
+    <div 
+      className="min-h-screen pt-[190px] md:pt-[250px] transition-all duration-500 pb-20"
+      style={{ backgroundImage: categoryTheme.pageGradient }}>
       <SEO title="Home" description="Welcome to our store" />
       <AppDownloadPopup />
       {showLocationModal && (
@@ -518,79 +523,60 @@ const Home = () => {
 
       {isLoading && <LottieLoader fullScreen />}
 
-      {products.length === 0 && !isLoading ? (
-        <div className="flex flex-col items-center justify-center pt-24 pb-48">
-          <div className="w-64 h-64 md:w-96 md:h-96 mb-8 rounded-3xl overflow-hidden">
-            <video
-              src="/coming-soon-animation-gif-download-10839535.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <h3 className="text-3xl md:text-5xl font-black text-slate-800 text-center uppercase">Service <span className="text-primary">Unavailable</span></h3>
-          <p className="text-slate-500 font-bold max-w-md text-center px-10 text-sm md:text-lg opacity-80">Ah! We haven't reached your neighborhood yet.</p>
-          <button onClick={() => window.location.reload()} className="mt-12 px-10 py-4 bg-primary text-white font-black rounded-[24px] uppercase text-[13px] tracking-widest transition-all active:scale-95">Check Again</button>
-        </div>
-      ) : (
-        <>
-          <motion.div ref={heroRef} className="block md:hidden will-change-transform" style={isMobile ? { opacity: 1 } : { opacity, y, scale, pointerEvents }}>
-            <div className="relative w-full overflow-hidden">
-              {heroConfig.mediaType === "dynamic" && heroConfig.dynamicConfig ? (
-                <DynamicEventBanner config={heroConfig.dynamicConfig} headerColor={activeCategory?.headerColor} />
-              ) : heroConfig.mediaType === "video" && heroConfig.videoUrl ? (
-                <div className="w-full relative overflow-hidden shadow-sm bg-black flex items-center justify-center aspect-[16/8] sm:aspect-[21/9]">
-                  <video
-                    src={heroConfig.videoUrl}
-                    poster={heroConfig.fallbackImageUrl || undefined}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-full object-cover object-center"
-                  />
-                </div>
-              ) : heroConfig.banners?.items?.length ? (
-                <ExperienceBannerCarousel section={{ title: "" }} items={heroConfig.banners.items} fullWidth edgeToEdge />
-              ) : (
-                <div className="w-full relative overflow-hidden shadow-sm flex items-center justify-center">
-                  <img src={CardBanner} alt="Banner" className="w-full h-full object-cover object-center aspect-[16/8] sm:aspect-[21/9]" />
-                </div>
-              )}
+      {/* Full-Page Dynamic Category Atmosphere Content */}
+      <motion.div ref={heroRef} className="block md:hidden will-change-transform" style={isMobile ? { opacity: 1 } : { opacity, y, scale, pointerEvents }}>
+        <div className="relative w-full overflow-hidden">
+          {heroConfig.mediaType === "dynamic" && heroConfig.dynamicConfig ? (
+            <DynamicEventBanner config={heroConfig.dynamicConfig} headerColor={activeCategory?.headerColor} />
+          ) : heroConfig.mediaType === "video" && heroConfig.videoUrl ? (
+            <div className="w-full relative overflow-hidden shadow-sm bg-black flex items-center justify-center aspect-[16/8] sm:aspect-[21/9]">
+              <video
+                src={heroConfig.videoUrl}
+                poster={heroConfig.fallbackImageUrl || undefined}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover object-center"
+              />
             </div>
-          </motion.div>
-
-          <PromoMarquee />
-          <QuickCategorySlider categories={effectiveQuickCategories} onCategoryClick={(id) => navigate(`/category/${id}`)} />
-          <LowestPriceSection
-            products={lowestPriceProducts.length > 0 ? lowestPriceProducts : products}
-            categoryName={activeCategory?.name && activeCategory._id !== "all" ? activeCategory.name : null}
-            isLoading={isLowestPriceLoading}
-            onSeeAll={() =>
-              navigate(
-                activeCategory && activeCategory._id !== "all"
-                  ? `/category/${activeCategory._id}?sort=price-asc&type=header`
-                  : "/category/all?sort=price-asc"
-              )
-            }
-          />
-
-          {!isHeaderCategory && (
-            <>
-              <ShopByStoreSection sellers={nearbySellers} />
-              <OfferSections sections={offerSections} />
-            </>
+          ) : heroConfig.banners?.items?.length ? (
+            <ExperienceBannerCarousel section={{ title: "" }} items={heroConfig.banners.items} fullWidth edgeToEdge />
+          ) : (
+            <div className="w-full relative overflow-hidden shadow-sm flex items-center justify-center">
+              <img src={CardBanner} alt="Banner" className="w-full h-full object-cover object-center aspect-[16/8] sm:aspect-[21/9]" />
+            </div>
           )}
+        </div>
+      </motion.div>
+
+      <PromoMarquee />
+      <QuickCategorySlider categories={effectiveQuickCategories} selectedCategoryId={activeCategory?._id} onCategoryClick={(id) => navigate(`/category/${id}`)} />
+      <LowestPriceSection
+        products={lowestPriceProducts.length > 0 ? lowestPriceProducts : products}
+        categoryName={activeCategory?.name && activeCategory._id !== "all" ? activeCategory.name : null}
+        isLoading={isLowestPriceLoading}
+        onSeeAll={() =>
+          navigate(
+            activeCategory && activeCategory._id !== "all"
+              ? `/category/${activeCategory._id}?sort=price-asc&type=header`
+              : "/category/all?sort=price-asc"
+          )
+        }
+      />
+
+      {!isHeaderCategory && (
+        <>
+          <ShopByStoreSection sellers={nearbySellers} />
+          <OfferSections sections={offerSections} allProducts={products} categoryTheme={categoryTheme} />
+        </>
+      )}
 
           {sectionsForRenderer.length > 0 && (
             <div className="container mx-auto px-4 md:px-8 lg:px-[50px] py-10 md:py-16">
               <SectionRenderer sections={sectionsForRenderer} productsById={productsById} categoriesById={categoryMap} subcategoriesById={subcategoryMap} />
             </div>
           )}
-        </>
-      )}
     </div>
   );
 };

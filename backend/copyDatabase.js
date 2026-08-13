@@ -1,8 +1,9 @@
+import 'dotenv/config';
 import { MongoClient } from 'mongodb';
 
 async function copyDatabase() {
-    const sourceUri = "mongodb+srv://playeronline4076_db_user:3e6Kc6Ikodz6vXGs@cluster0.yau7gwg.mongodb.net/Quick_commerce?retryWrites=true&w=majority&appName=Cluster0";
-    const targetUri = "mongodb+srv://zoogno:zoogno123@cluster0.bj0klhd.mongodb.net/zoogno";
+    const sourceUri = process.env.SOURCE_MONGO_URI || process.env.MONGO_URI;
+    const targetUri = process.env.TARGET_MONGO_URI || process.env.MONGO_URI;
 
     const sourceClient = new MongoClient(sourceUri);
     const targetClient = new MongoClient(targetUri);
