@@ -10,7 +10,7 @@ const isFirebaseConfigured = Boolean(
   apiKey &&
   projectId &&
   !apiKey.includes("YOUR_") &&
-  apiKey !== "AIzaSyCzIpvdpnLk6Dske8dBwt9tzahZMspZoHc"
+  !apiKey.includes("CzIpvdpnLk6Dske8dBwt9tzahZMspZoHc")
 );
 
 const firebaseConfig = {
